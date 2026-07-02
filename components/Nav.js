@@ -1,0 +1,169 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useTheme } from "@/lib/ThemeContext";
+import { User } from "lucide-react";
+
+export default function Nav({ categories = [] }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { night, toggleNight } = useTheme();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+  }, [open]);
+
+  // Split categories into two columns for the mega menu
+  const mid = Math.ceil(categories.length / 2);
+  const col1 = categories.slice(0, mid);
+  const col2 = categories.slice(mid);
+
+  return (
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 bg-paper transition-all duration-300 ${
+          scrolled || open ? "py-3 border-b border-line" : "py-4"
+        }`}
+      >
+        {/* Logo — brighter in dark mode via invert */}
+        <Link href="/" className="relative h-9 w-[150px]" onClick={() => setOpen(false)}>
+          <Image
+            src="/logo/logo-cutout.png"
+            alt="Ola Wood"
+            fill
+            className={`object-contain object-left transition-all duration-500 ${night ? "brightness-0 invert" : ""}`}
+            priority
+          />
+        </Link>
+
+        {/* Desktop nav links — hidden on mobile */}
+        <nav className="hidden md:flex items-center gap-8">
+          <Link href="/" className="text-sm text-ink hover:text-mute transition-colors">Home</Link>
+          <Link href="/#services" className="text-sm text-ink hover:text-mute transition-colors">Services</Link>
+          <Link href="/#contact" className="text-sm text-ink hover:text-mute transition-colors">Contact</Link>
+          <div className="relative group">
+            <button className="text-sm text-ink hover:text-mute transition-colors">
+              Collections ↓
+            </button>
+            {/* Mega dropdown */}
+            <div className="absolute top-full right-0 pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
+              <div className="bg-paper border border-line p-6 w-[400px] grid grid-cols-2 gap-x-8 gap-y-2 shadow-lg">
+                {categories.map((c) => (
+                  <Link
+                    key={c.slug}
+                    href={`/collections/${c.slug}`}
+                    className="text-sm text-ink hover:text-mute transition-colors py-1 truncate"
+                  >
+                    {c.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <Link
+            href="/account/login"
+            aria-label="Account"
+            className="flex items-center justify-center w-9 h-9 border border-line rounded-full text-ink hover:border-ink transition-colors shrink-0"
+          >
+            <User size={15} strokeWidth={1.5} />
+          </Link>
+
+          {/* Day/Night pill toggle */}
+          <button
+            onClick={toggleNight}
+            aria-label={night ? "Switch to day mode" : "Switch to night mode"}
+            className={`relative inline-flex h-7 w-14 items-center rounded-full border transition-colors duration-500 ${
+              night ? "bg-[#1a2040] border-[#2b3158]" : "bg-smoke border-line"
+            }`}
+          >
+            <span className="absolute left-1.5 text-[10px]">☀️</span>
+            <span className="absolute right-1.5 text-[10px]">🌙</span>
+            <span
+              className={`absolute h-5 w-5 rounded-full bg-paper shadow transition-transform duration-500 ${
+                night ? "translate-x-7" : "translate-x-1"
+              }`}
+            />
+          </button>
+
+          {/* Hamburger — mobile only */}
+          <button
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            className="md:hidden flex flex-col gap-[5px] w-8 h-8 items-end justify-center"
+          >
+            <span className={`block h-[1.5px] bg-ink transition-all duration-300 ${open ? "w-7 rotate-45 translate-y-[3.5px]" : "w-7"}`} />
+            <span className={`block h-[1.5px] bg-ink transition-all duration-300 ${open ? "w-7 -rotate-45 -translate-y-[3.5px]" : "w-5"}`} />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile fullscreen menu */}
+      <div
+        className={`fixed inset-0 z-40 bg-paper transition-opacity duration-400 md:hidden ${
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <nav className="h-full flex flex-col px-10 pt-28 pb-12 overflow-y-auto">
+          {/* Primary links */}
+          <div className="flex flex-col gap-1 mb-8">
+            {[
+              { label: "Home", href: "/" },
+              { label: "Services", href: "/#services" },
+              { label: "Contact", href: "/#contact" },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="font-display text-4xl text-mute hover:text-ink transition-colors leading-tight"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-line mb-8" />
+
+          {/* Collections in 2 columns */}
+          <p className="label text-mute mb-4">Collections</p>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+            {col1.map((c) => (
+              <Link
+                key={c.slug}
+                href={`/collections/${c.slug}`}
+                onClick={() => setOpen(false)}
+                className="text-ink text-base hover:text-mute transition-colors leading-snug"
+              >
+                {c.name}
+              </Link>
+            ))}
+            {col2.map((c) => (
+              <Link
+                key={c.slug}
+                href={`/collections/${c.slug}`}
+                onClick={() => setOpen(false)}
+                className="text-ink text-base hover:text-mute transition-colors leading-snug"
+              >
+                {c.name}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      </div>
+    </>
+  );
+}

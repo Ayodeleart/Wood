@@ -1,0 +1,96 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { imageFitClass } from "@/lib/imageFit";
+import { getProductDisplayImage } from "@/lib/getProductDisplayImage";
+import CatalogButton from "@/components/CatalogButton";
+import { useTheme } from "@/lib/ThemeContext";
+
+export default function CollectionGrid({ category, products, forceContain }) {
+  const { night: globalNight } = useTheme();
+  const [isNight, setIsNight] = useState(globalNight);
+  const userTouched = useRef(false);
+
+  // Follow the global preference until the user manually flips this page's own toggle —
+  // after that, this page is independent and won't be overwritten by the global setting.
+  useEffect(() => {
+    if (!userTouched.current) setIsNight(globalNight);
+  }, [globalNight]);
+
+  function handleToggle() {
+    userTouched.current = true;
+    setIsNight((v) => !v);
+  }
+  const hasAnyNightImage = products.some((p) => p.night_image_url);
+
+  return (
+    <div className={`transition-colors duration-700 ${isNight ? "theme-night" : "theme-day"}`}>
+      <div className="px-6 md:px-14 pt-32 pb-24">
+        <span className="label text-mute">{category.tagline}</span>
+        <h1 className="font-display font-semibold text-ink text-[clamp(40px,7vw,96px)] leading-[0.9] mt-3 mb-8">
+          {category.name}
+        </h1>
+
+        <div className="flex flex-wrap items-center gap-6 mb-14">
+          {products.length > 0 && <CatalogButton categorySlug={category.slug} categoryName={category.name} />}
+
+          {hasAnyNightImage && (
+            <button
+              type="button"
+              onClick={handleToggle}
+              className={`flex items-center gap-3 px-4 py-2 border transition-colors duration-500 ${
+                isNight ? "bg-smoke border-line text-ink" : "bg-paper border-line text-ink"
+              }`}
+            >
+              <span className="label text-xs">Day</span>
+              <span
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-500 ${
+                  isNight ? "bg-amber-400/80" : "bg-line"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-500 ${
+                    isNight ? "translate-x-4" : "translate-x-0.5"
+                  }`}
+                />
+              </span>
+              <span className="label text-xs">Night</span>
+            </button>
+          )}
+        </div>
+
+        {products.length === 0 ? (
+          <p className="text-mute">No products in this collection yet.</p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-14">
+            {products.map((p) => {
+              const src = getProductDisplayImage(p, isNight);
+              return (
+                <Link key={p.id} href={`/products/${p.slug}`} className="group flex flex-col">
+                  <div className="relative aspect-square bg-smoke overflow-hidden">
+                    {src && (
+                      <Image
+                        src={src}
+                        alt={p.name}
+                        fill
+                        className={`${forceContain ? "object-contain" : imageFitClass(src)} transition-transform duration-500 group-hover:scale-[1.04]`}
+                      />
+                    )}
+                  </div>
+                  <div className="pt-4 flex items-baseline justify-between">
+                    <h3 className="font-display text-base md:text-lg text-ink">{p.name}</h3>
+                    {p.price && (
+                      <span className="text-sm text-mute">₦{Number(p.price).toLocaleString()}</span>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
