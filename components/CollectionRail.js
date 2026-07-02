@@ -80,9 +80,16 @@ export default function CollectionRail({ category, products }) {
     : "auto";
 
   return (
-    <section ref={sectionRef} style={{ height: sectionHeight }} className="relative bg-paper">
-      <div className={`${scrollBudget > 0 ? "sticky top-0 h-screen" : ""} overflow-hidden flex flex-col`}>
-        <div className="px-6 md:px-14 pt-20 pb-8 shrink-0 flex items-baseline justify-between gap-4">
+    <section id={`cat-${category.slug}`} ref={sectionRef} style={{ height: sectionHeight }} className="relative bg-paper scroll-mt-[calc(var(--nav-h,72px)+var(--subnav-h,52px))]">
+      <div
+        className={`${scrollBudget > 0 ? "sticky" : ""} overflow-hidden flex flex-col`}
+        style={
+          scrollBudget > 0
+            ? { top: "var(--nav-h, 72px)", height: "calc(100vh - var(--nav-h, 72px) - var(--subnav-h, 52px))" }
+            : undefined
+        }
+      >
+        <div className="px-6 md:px-14 pt-12 pb-8 shrink-0 flex items-baseline justify-between gap-4">
           <div>
             <span className="label text-mute">{category.tagline}</span>
             <h2 className="font-display font-semibold text-ink text-[clamp(36px,6vw,72px)] leading-[0.92] mt-2">

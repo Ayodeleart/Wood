@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "@/lib/ThemeContext";
@@ -10,6 +10,7 @@ export default function Nav({ categories = [] }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { night, toggleNight } = useTheme();
+  const headerRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -17,6 +18,21 @@ export default function Nav({ categories = [] }) {
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Publish the header's real rendered height as a CSS var so other sticky
+  // elements (e.g. the e-commerce category sub-nav) can offset below it
+  // without hardcoding a pixel value that drifts when this header's padding changes.
+  useEffect(() => {
+    if (!headerRef.current) return;
+    const el = headerRef.current;
+    const setVar = () => {
+      document.documentElement.style.setProperty("--nav-h", `${el.offsetHeight}px`);
+    };
+    setVar();
+    const ro = new ResizeObserver(setVar);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [scrolled, open]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -30,6 +46,7 @@ export default function Nav({ categories = [] }) {
   return (
     <>
       <header
+        ref={headerRef}
         className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 bg-paper transition-all duration-300 ${
           scrolled || open ? "py-3 border-b border-line" : "py-4"
         }`}

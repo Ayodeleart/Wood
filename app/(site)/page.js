@@ -6,6 +6,7 @@ import CollectionRail from "@/components/CollectionRail";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import ShopHero from "@/components/ecommerce/ShopHero";
+import CategoryStickyNav from "@/components/ecommerce/CategoryStickyNav";
 import HomeGate from "@/components/HomeGate";
 import { getHomeData } from "@/lib/getHomeData";
 import { supabaseServer } from "@/lib/supabaseServer";
@@ -56,7 +57,10 @@ export default async function Home() {
           <h2 className="font-display text-3xl text-ink">Add your first product from the admin panel.</h2>
         </div>
       ) : (
-        categories.map((cat) => <CollectionRail key={cat.slug} category={cat} products={cat.products} />)
+        <>
+          <CategoryStickyNav categories={categories} />
+          {categories.map((cat) => <CollectionRail key={cat.slug} category={cat} products={cat.products} />)}
+        </>
       )}
       <FeaturedProducts products={featuredProducts} />
     </main>
