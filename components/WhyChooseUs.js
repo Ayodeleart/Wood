@@ -1,4 +1,5 @@
 import { Truck, Award, ShieldCheck, PencilRuler, Leaf, Gem } from "lucide-react";
+import Reveal from "@/components/Reveal";
 
 const POINTS = [
   { icon: Truck, title: "Fast, Free Delivery", desc: "Enjoy free delivery on every order within Ijebu-Ode and beyond." },
@@ -12,18 +13,18 @@ const POINTS = [
 export default function WhyChooseUs() {
   return (
     <section className="bg-[#a9683e] text-paper px-6 md:px-14 py-20 md:py-28">
-      <h2 className="font-display font-medium text-[clamp(28px,4vw,44px)] leading-[1.1] mb-14">
+      <Reveal as="h2" className="font-display font-medium text-[clamp(28px,4vw,44px)] leading-[1.1] mb-14">
         Why Choose
         <br />
         Ola Wood?
-      </h2>
+      </Reveal>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-10">
-        {POINTS.map((p) => (
-          <div key={p.title} className="flex flex-col">
+        {POINTS.map((p, i) => (
+          <Reveal key={p.title} delay={i * 90} className="flex flex-col">
             <p.icon size={26} strokeWidth={1.3} className="mb-4" />
             <h3 className="font-medium mb-1.5">{p.title}</h3>
             <p className="text-sm text-paper/75 leading-relaxed">{p.desc}</p>
-          </div>
+          </Reveal>
         ))}
       </div>
     </section>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { imageFitClass } from "@/lib/imageFit";
 import { getProductDisplayImage } from "@/lib/getProductDisplayImage";
 import { useTheme } from "@/lib/ThemeContext";
+import Reveal from "@/components/Reveal";
 
 export default function FeaturedProducts({ products }) {
   const { night } = useTheme();
@@ -21,10 +22,11 @@ export default function FeaturedProducts({ products }) {
         </div>
       </div>
       <div className="grid grid-cols-4 gap-6">
-        {products.map((p) => {
+        {products.map((p, i) => {
           const displayImage = getProductDisplayImage(p, night);
           return (
-          <Link key={p.id} href={`/products/${p.slug}`} className="group flex flex-col">
+          <Reveal key={p.id} delay={i * 90}>
+          <Link href={`/products/${p.slug}`} className="group flex flex-col">
             <div className="relative aspect-square bg-smoke overflow-hidden">
               {displayImage && (
                 <Image
@@ -45,6 +47,7 @@ export default function FeaturedProducts({ products }) {
               )}
             </div>
           </Link>
+          </Reveal>
           );
         })}
       </div>

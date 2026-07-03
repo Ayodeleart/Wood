@@ -13,10 +13,12 @@ export default {
         smoke: "var(--smoke)",
         line: "var(--line)",
         mute: "var(--mute)",
+        accent: "var(--accent)",
       },
       fontFamily: {
         display: ["var(--font-display)"],
         ui: ["var(--font-ui)"],
+        wordmark: ["var(--font-wordmark)"],
       },
     },
   },

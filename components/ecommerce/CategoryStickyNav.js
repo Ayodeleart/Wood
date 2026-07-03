@@ -79,7 +79,7 @@ export default function CategoryStickyNav({ categories = [] }) {
             onClick={() => goTo(c.slug)}
             className={`label whitespace-nowrap px-4 py-2 rounded-full border transition-colors duration-300 shrink-0 ${
               active === c.slug
-                ? "bg-ink text-paper border-ink"
+                ? "bg-accent text-paper border-accent"
                 : "bg-transparent text-mute border-line hover:text-ink hover:border-ink/40"
             }`}
           >

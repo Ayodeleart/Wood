@@ -5,7 +5,19 @@ export default function Footer({ categories = [] }) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-smoke border-t border-line px-6 md:px-14 pt-16 pb-8">
+    <footer className="border-t border-line">
+      <div id="contact" className="bg-ink text-paper py-24 md:py-28 px-6 md:px-14 text-center">
+        <span className="label text-paper/60">Custom Orders · Consultations · Bespoke</span>
+        <h2 className="font-display font-semibold text-[clamp(30px,5vw,56px)] mt-4 mb-10">Start a conversation</h2>
+        <a
+          href="mailto:olawoodworksynergy@gmail.com"
+          className="label border-b border-paper/40 pb-2 hover:border-paper transition-colors"
+        >
+          olawoodworksynergy@gmail.com
+        </a>
+      </div>
+
+      <div className="bg-smoke px-6 md:px-14 pt-16 pb-8">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-14 border-b border-line">
         <div>
           <div className="relative h-9 w-[150px] mb-5">
@@ -45,8 +57,8 @@ export default function Footer({ categories = [] }) {
             olawoodworksynergy@gmail.com
           </a>
           <div className="flex items-center gap-4">
-            <a href="#" aria-label="Instagram" className="text-mute hover:text-ink transition-colors text-sm">Instagram</a>
-            <a href="#" aria-label="WhatsApp" className="text-mute hover:text-ink transition-colors text-sm">WhatsApp</a>
+            <a href="#" aria-label="Instagram" className="text-mute hover:text-accent transition-colors text-sm">Instagram</a>
+            <a href="#" aria-label="WhatsApp" className="text-mute hover:text-accent transition-colors text-sm">WhatsApp</a>
           </div>
         </div>
       </div>
@@ -56,6 +68,7 @@ export default function Footer({ categories = [] }) {
         <div className="flex items-center gap-6">
           <span>Lagos, Nigeria</span>
         </div>
+      </div>
       </div>
     </footer>
   );

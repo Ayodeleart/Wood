@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,9 +9,11 @@
   --smoke: #f4f4f2;
   --line: #d8d8d4;
   --mute: #8a8a85;
+  --accent: #2c4870;
 
   --font-display: "Cormorant", serif;
   --font-ui: "Manrope", sans-serif;
+  --font-wordmark: "Space Grotesk", sans-serif;
 }
 
 /* Scoped dark mode: wrap any section in this class and every bg-paper/text-ink/etc.

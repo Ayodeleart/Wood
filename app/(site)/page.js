@@ -43,7 +43,7 @@ export default async function Home() {
           </h3>
           <Link
             href="/account/login"
-            className="label border-b border-ink pb-1 hover:border-mute hover:text-mute transition-colors"
+            className="label border-b border-accent text-accent pb-1 hover:border-ink hover:text-ink transition-colors"
           >
             Sign In to Shop →
           </Link>
@@ -51,16 +51,6 @@ export default async function Home() {
       )}
       <Services />
       <WhyChooseUs />
-      <section id="contact" className="bg-ink text-paper py-28 px-6 md:px-14 text-center">
-        <span className="label text-paper/60">Custom Orders · Consultations · Bespoke</span>
-        <h2 className="font-display font-semibold text-[clamp(32px,6vw,64px)] mt-4 mb-10">Start a conversation</h2>
-        <a
-          href="mailto:olawoodworksynergy@gmail.com"
-          className="label border-b border-paper/40 pb-2 hover:border-paper transition-colors"
-        >
-          olawoodworksynergy@gmail.com
-        </a>
-      </section>
       <Footer categories={categories} />
     </main>
   );

@@ -1,3 +1,5 @@
+import Reveal from "@/components/Reveal";
+
 const SERVICES = [
   {
     title: "Interior Design Consultation",
@@ -34,11 +36,11 @@ export default function Services() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
         {SERVICES.map((s, i) => (
-          <div key={s.title} className="flex flex-col">
-            <span className="font-display text-3xl text-mute mb-4">{String(i + 1).padStart(2, "0")}</span>
+          <Reveal key={s.title} delay={i * 90} className="flex flex-col">
+            <span className="font-display text-3xl text-accent mb-4">{String(i + 1).padStart(2, "0")}</span>
             <h3 className="text-ink text-lg mb-2">{s.title}</h3>
             <p className="text-mute text-sm leading-relaxed">{s.copy}</p>
-          </div>
+          </Reveal>
         ))}
       </div>
     </section>
