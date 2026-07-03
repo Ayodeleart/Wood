@@ -18,6 +18,7 @@ export default function HeroSlidesAdmin() {
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [removeBg, setRemoveBg] = useState(true);
   const [error, setError] = useState("");
   const [form, setForm] = useState(BLANK_FORM);
 
@@ -37,7 +38,11 @@ export default function HeroSlidesAdmin() {
     setUploading(true);
     const fd = new FormData();
     fd.append("file", file);
-    fd.append("mode", "hero");
+    if (removeBg) {
+      fd.append("removeBg", "true");
+    } else {
+      fd.append("mode", "hero");
+    }
     try {
       const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
       const data = await res.json();
@@ -109,6 +114,10 @@ export default function HeroSlidesAdmin() {
 
         <label className="label text-mute block mb-2">
           Product Photo {form.placement === "landing" ? "(background removed / transparent PNG works best)" : "(transparent PNG works best)"}
+        </label>
+        <label className="flex items-center gap-2 mb-3 text-sm text-ink">
+          <input type="checkbox" checked={removeBg} onChange={(e) => setRemoveBg(e.target.checked)} />
+          Remove background automatically
         </label>
         <div className="flex items-center gap-4 mb-6">
           <div className="relative w-24 h-24 bg-smoke border border-line shrink-0">

@@ -4,8 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 // Scales "Olawood Work" to fill the available width edge-to-edge on any
-// screen size, measured directly rather than guessed with fixed vw values —
-// so it holds up whether the brand text is short or long.
+// screen size. Re-measures on mount, on resize, AND once the wordmark's own
+// web font finishes loading — skipping that last part was the actual bug
+// last round: the very first measurement happened while the browser was
+// still rendering with a fallback system font, so the fit was calculated
+// against the wrong letterforms and never corrected itself afterward.
 function FitText({ text, className, baseSize = 100 }) {
   const containerRef = useRef(null);
   const textRef = useRef(null);
@@ -23,6 +26,9 @@ function FitText({ text, className, baseSize = 100 }) {
     }
     fit();
     window.addEventListener("resize", fit);
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      document.fonts.ready.then(fit);
+    }
     return () => window.removeEventListener("resize", fit);
   }, [text, baseSize]);
 
@@ -55,33 +61,33 @@ export default function Hero({ slides = [] }) {
 
   return (
     <section
-      className="relative w-full h-[68vh] md:h-[88vh] overflow-hidden flex flex-col transition-colors duration-[1600ms] ease-in-out"
+      className="relative w-full h-[68vh] md:h-[88vh] overflow-hidden transition-colors duration-[1600ms] ease-in-out"
       style={{ backgroundColor: bg }}
     >
-      {/* Wordmark, positioned toward the top rather than centered */}
-      <div className="relative z-10 px-4 md:px-10 pt-24 md:pt-28">
+      {/* Wordmark layer — sits toward the top, BEHIND the product photo */}
+      <div className="absolute top-[12%] md:top-[14%] left-0 right-0 z-0 px-4 md:px-10">
         <FitText
           text="Olawood Work"
           baseSize={140}
           className="font-wordmark font-black text-ink tracking-tight leading-none"
         />
-        <div className="w-full flex justify-end pr-2 md:pr-6">
-          <span className="font-ui font-medium text-[6vw] md:text-[2.4vw] text-ink/30 tracking-wide -mt-1 md:-mt-2">
-            Synergy
-          </span>
-        </div>
+        {/* Synergy sits directly under the wordmark, not off on its own */}
+        <span className="block font-ui font-medium text-[5vw] md:text-[1.8vw] text-ink/30 tracking-[0.15em] mt-1 md:mt-2 pl-1">
+          SYNERGY
+        </span>
       </div>
 
-      {/* Product photo, crossfading only — no slide motion, no dots */}
-      <div className="relative flex-1">
+      {/* Product photo layer — overlaps the lower portion of the wordmark, same
+          coordinate space, crossfading only, no slide motion, no dots */}
+      <div className="absolute inset-0 z-10 flex items-end justify-center pb-24 md:pb-28 pointer-events-none">
         {slides.map((slide, i) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 flex items-end justify-center pb-4 transition-opacity duration-[1400ms] ease-in-out ${
+            className={`absolute inset-0 flex items-end justify-center pb-24 md:pb-28 transition-opacity duration-[1400ms] ease-in-out ${
               i === index ? "opacity-100" : "opacity-0"
             }`}
           >
-            <div className="relative w-[70%] h-[90%] md:w-[38%] md:h-[95%]">
+            <div className="relative w-[68%] h-[58%] md:w-[36%] md:h-[68%]">
               <Image src={slide.image} alt="Featured piece" fill priority={i === 0} className="object-contain drop-shadow-xl" />
             </div>
           </div>
@@ -89,7 +95,7 @@ export default function Hero({ slides = [] }) {
       </div>
 
       {/* Bottom caption bar */}
-      <div className="relative z-20 flex items-end justify-between gap-6 px-6 md:px-14 pb-8 md:pb-10">
+      <div className="absolute z-20 bottom-0 left-0 right-0 flex items-end justify-between gap-6 px-6 md:px-14 pb-8 md:pb-10">
         <p className="text-ink text-sm md:text-base leading-snug max-w-xs">
           Furniture designed around how you actually live.
         </p>

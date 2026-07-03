@@ -17,8 +17,10 @@ import Link from "next/link";
 
 export const revalidate = 0;
 
-export default async function Home() {
+export default async function Home({ searchParams }) {
   const { categories, featuredProducts } = await getHomeData();
+  const params = await searchParams;
+  const forcePreview = params?.preview === "shop";
 
   const sb = await supabaseServer();
   const { data: { user } } = await sb.auth.getUser();
@@ -80,5 +82,5 @@ export default async function Home() {
     </main>
   );
 
-  return <HomeGate loggedIn={!!user} landing={landing} ecommerce={ecommerce} />;
+  return <HomeGate loggedIn={!!user} forcePreview={forcePreview} landing={landing} ecommerce={ecommerce} />;
 }
