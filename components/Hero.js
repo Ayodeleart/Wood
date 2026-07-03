@@ -58,17 +58,12 @@ export default function Hero({ slides = [] }) {
       className="relative w-full h-[68vh] md:h-[88vh] overflow-hidden flex flex-col transition-colors duration-[1600ms] ease-in-out"
       style={{ backgroundColor: bg }}
     >
-      {/* Top label only — no slide dots */}
-      <div className="relative z-20 px-6 md:px-14 pt-24 md:pt-28">
-        <span className="label text-ink/50">Handcrafted · Ijebu-Ode, Ogun State</span>
-      </div>
-
       {/* Wordmark, positioned toward the top rather than centered */}
-      <div className="relative z-10 px-4 md:px-10 pt-6 md:pt-10">
+      <div className="relative z-10 px-4 md:px-10 pt-24 md:pt-28">
         <FitText
           text="Olawood Work"
           baseSize={140}
-          className="font-ui font-extrabold text-ink tracking-tight leading-none"
+          className="font-wordmark font-black text-ink tracking-tight leading-none"
         />
         <div className="w-full flex justify-end pr-2 md:pr-6">
           <span className="font-ui font-medium text-[6vw] md:text-[2.4vw] text-ink/30 tracking-wide -mt-1 md:-mt-2">

@@ -233,9 +233,14 @@ export default function AdminDashboard() {
     <main className="flex-1 min-h-screen bg-smoke pt-24 pb-16 px-6 md:px-14">
       <div className="flex items-center justify-between mb-10">
         <h1 className="font-display font-semibold text-3xl text-ink">Admin</h1>
-        <button onClick={logout} className="label text-mute hover:text-ink transition-colors">
-          Log Out
-        </button>
+        <div className="flex items-center gap-6">
+          <a href="/admin/hero-slides" className="label text-mute hover:text-ink transition-colors">
+            Hero Slides
+          </a>
+          <button onClick={logout} className="label text-mute hover:text-ink transition-colors">
+            Log Out
+          </button>
+        </div>
       </div>
 
       {view === "list" && (
