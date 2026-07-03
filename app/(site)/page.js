@@ -18,19 +18,26 @@ import Link from "next/link";
 export const revalidate = 0;
 
 export default async function Home() {
-  const { categories, heroFrames, featuredProducts } = await getHomeData();
+  const { categories, featuredProducts } = await getHomeData();
 
   const sb = await supabaseServer();
   const { data: { user } } = await sb.auth.getUser();
 
-  const { data: shopSlides } = await supabasePublic
+  const { data: allSlides } = await supabasePublic
     .from("shop_hero_slides")
     .select("*")
     .order("sort_order", { ascending: true });
 
+  // Split by placement in JS rather than filtering in the query — this way the
+  // page still works even before the placement/bg_color migration has been run
+  // (older rows just have no `placement` value, and fall back to "shop" below,
+  // which matches how the e-commerce hero already behaved).
+  const landingSlides = (allSlides || []).filter((s) => s.placement === "landing");
+  const shopSlides = (allSlides || []).filter((s) => !s.placement || s.placement === "shop");
+
   const landing = (
     <main className="flex-1">
-      <Hero frames={heroFrames} />
+      <Hero slides={landingSlides} />
       <BrandStory />
       <CategoryTiles categories={categories} />
       <NeedsGrid />
@@ -57,7 +64,7 @@ export default async function Home() {
 
   const ecommerce = (
     <main className="flex-1">
-      <ShopHero slides={shopSlides || []} />
+      <ShopHero slides={shopSlides} />
       {categories.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-40 px-6 text-center">
           <span className="label text-mute mb-3">Collection Coming</span>

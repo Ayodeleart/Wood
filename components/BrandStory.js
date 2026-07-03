@@ -16,7 +16,7 @@ export default function BrandStory() {
           combining premium materials, skilled craftsmanship, and a deep respect for how people actually
           live in their spaces.
         </p>
-        <a href="#services" className="label border-b border-ink/30 pb-2 w-fit mt-6 hover:border-ink transition-colors">
+        <a href="#services" className="label border-b border-ink/30 pb-2 w-fit mt-6 hover:border-accent hover:text-accent transition-colors">
           More About Us
         </a>
       </Reveal>

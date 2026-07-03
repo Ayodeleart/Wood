@@ -2,20 +2,20 @@ import Reveal from "@/components/Reveal";
 
 const SERVICES = [
   {
-    title: "Interior Design Consultation",
-    copy: "One-on-one sessions with our designers to plan furniture, layout, and finishes around how you actually live.",
+    title: "Home & Space Consultation",
+    copy: "A designer visits or video-calls to walk through your space and help you choose pieces that actually fit it.",
   },
   {
-    title: "Custom & Made-to-Order",
-    copy: "Any piece can be resized, reupholstered, or rebuilt in a different wood or fabric to fit your space exactly.",
+    title: "Custom & Bespoke Builds",
+    copy: "Need a size, wood tone, or fabric we don't stock? We build one-off pieces to your exact spec.",
   },
   {
-    title: "Nationwide Delivery & Installation",
-    copy: "White-glove delivery and assembly across Nigeria, handled by our own team — not a third-party courier.",
+    title: "3D Space Visualization",
+    copy: "See your room furnished before you buy — a rendered layout of your actual space with the pieces in place.",
   },
   {
-    title: "Aftercare & Warranty",
-    copy: "Every piece is covered, with a dedicated line for repairs, replacement parts, and re-finishing.",
+    title: "Corporate & Hospitality Projects",
+    copy: "Furnishing an office, hotel, or event space? We handle bulk orders and full-room projects end to end.",
   },
 ];
 

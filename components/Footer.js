@@ -66,7 +66,8 @@ export default function Footer({ categories = [] }) {
       <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-4 pt-6 text-xs text-mute">
         <span>© {year} Ola Wood — All Rights Reserved</span>
         <div className="flex items-center gap-6">
-          <span>Lagos, Nigeria</span>
+          <span>Ijebu-Ode, Ogun State</span>
+          <span className="text-mute/70">Built by octopusfur</span>
         </div>
       </div>
       </div>

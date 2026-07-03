@@ -45,12 +45,12 @@ export default function ShopHero({ slides = [] }) {
       )}
 
       {/* Promo banner, bottom-left */}
-      {(slide.promoText || slide.ctaLabel) && (
+      {(slide.promo_text || slide.cta_label) && (
         <div className="absolute left-6 md:left-14 bottom-10 md:bottom-14 bg-paper/95 backdrop-blur px-6 py-5 max-w-xs shadow-lg">
-          {slide.promoText && <p className="text-ink text-sm mb-3">{slide.promoText}</p>}
-          {slide.ctaLabel && slide.ctaHref && (
-            <Link href={slide.ctaHref} className="label bg-ink text-paper px-5 py-2.5 inline-block">
-              {slide.ctaLabel}
+          {slide.promo_text && <p className="text-ink text-sm mb-3">{slide.promo_text}</p>}
+          {slide.cta_label && slide.cta_href && (
+            <Link href={slide.cta_href} className="label bg-ink text-paper px-5 py-2.5 inline-block">
+              {slide.cta_label}
             </Link>
           )}
         </div>
