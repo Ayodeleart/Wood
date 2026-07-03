@@ -3,13 +3,11 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useTheme } from "@/lib/ThemeContext";
 import { User } from "lucide-react";
 
 export default function Nav({ categories = [] }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const { night, toggleNight } = useTheme();
   const headerRef = useRef(null);
 
   useEffect(() => {
@@ -47,17 +45,17 @@ export default function Nav({ categories = [] }) {
     <>
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 bg-paper transition-all duration-300 ${
-          scrolled || open ? "py-3 border-b border-line" : "py-4"
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 bg-paper border-b transition-all duration-300 ${
+          scrolled || open ? "py-3 border-line shadow-sm" : "py-4 border-line/60"
         }`}
       >
-        {/* Logo — brighter in dark mode via invert */}
+        {/* Logo */}
         <Link href="/" className="relative h-9 w-[150px]" onClick={() => setOpen(false)}>
           <Image
             src="/logo/logo-cutout.png"
             alt="Ola Wood"
             fill
-            className={`object-contain object-left transition-all duration-500 ${night ? "brightness-0 invert" : ""}`}
+            className="object-contain object-left"
             priority
           />
         </Link>
@@ -96,23 +94,6 @@ export default function Nav({ categories = [] }) {
           >
             <User size={15} strokeWidth={1.5} />
           </Link>
-
-          {/* Day/Night pill toggle */}
-          <button
-            onClick={toggleNight}
-            aria-label={night ? "Switch to day mode" : "Switch to night mode"}
-            className={`relative inline-flex h-7 w-14 items-center rounded-full border transition-colors duration-500 ${
-              night ? "bg-[#1a2040] border-[#2b3158]" : "bg-smoke border-line"
-            }`}
-          >
-            <span className="absolute left-1.5 text-[10px]">☀️</span>
-            <span className="absolute right-1.5 text-[10px]">🌙</span>
-            <span
-              className={`absolute h-5 w-5 rounded-full bg-paper shadow transition-transform duration-500 ${
-                night ? "translate-x-7" : "translate-x-1"
-              }`}
-            />
-          </button>
 
           {/* Hamburger — mobile only */}
           <button

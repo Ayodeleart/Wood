@@ -3,14 +3,17 @@ import BrandStory from "@/components/BrandStory";
 import CategoryTiles from "@/components/CategoryTiles";
 import NeedsGrid from "@/components/NeedsGrid";
 import CollectionRail from "@/components/CollectionRail";
+import Services from "@/components/Services";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import FeaturedProducts from "@/components/FeaturedProducts";
+import Footer from "@/components/Footer";
 import ShopHero from "@/components/ecommerce/ShopHero";
 import CategoryStickyNav from "@/components/ecommerce/CategoryStickyNav";
 import HomeGate from "@/components/HomeGate";
 import { getHomeData } from "@/lib/getHomeData";
 import { supabaseServer } from "@/lib/supabaseServer";
 import { supabasePublic } from "@/lib/supabasePublic";
+import Link from "next/link";
 
 export const revalidate = 0;
 
@@ -31,6 +34,22 @@ export default async function Home() {
       <BrandStory />
       <CategoryTiles categories={categories} />
       <NeedsGrid />
+      <FeaturedProducts products={featuredProducts} />
+      {featuredProducts?.length > 0 && (
+        <div className="flex flex-col items-center text-center px-6 py-16 border-t border-line">
+          <span className="label text-mute mb-3">The Full Collection</span>
+          <h3 className="font-display text-2xl md:text-3xl text-ink mb-6">
+            Sign in to browse and shop everything we have in the showroom.
+          </h3>
+          <Link
+            href="/account/login"
+            className="label border-b border-ink pb-1 hover:border-mute hover:text-mute transition-colors"
+          >
+            Sign In to Shop →
+          </Link>
+        </div>
+      )}
+      <Services />
       <WhyChooseUs />
       <section id="contact" className="bg-ink text-paper py-28 px-6 md:px-14 text-center">
         <span className="label text-paper/60">Custom Orders · Consultations · Bespoke</span>
@@ -42,9 +61,7 @@ export default async function Home() {
           olawoodworksynergy@gmail.com
         </a>
       </section>
-      <footer className="py-10 px-6 md:px-14 text-center text-xs text-mute">
-        <span>© {new Date().getFullYear()} Ola Wood — All Rights Reserved</span>
-      </footer>
+      <Footer categories={categories} />
     </main>
   );
 
