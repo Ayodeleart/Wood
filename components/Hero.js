@@ -32,15 +32,18 @@ function FitText({ text, className, refSize = 100 }) {
       const container = containerRef.current;
       const el = textRef.current;
       if (!container || !el || cancelled) return;
+      // getBoundingClientRect() reports the POST-transform visual size, not the
+      // underlying layout size. Without this reset, any re-measurement (mobile
+      // Safari fires resize events constantly as its address bar shows/hides
+      // while scrolling) would measure an already-scaled box instead of the
+      // true unscaled one, compounding the error further with every firing —
+      // which is exactly what produced the wildly oversized wordmark.
+      el.style.transform = "none";
       const containerWidth = container.getBoundingClientRect().width;
       const rect = el.getBoundingClientRect();
       if (rect.width > 0) {
         const s = containerWidth / rect.width;
         setScale(s);
-        // transform:scale() doesn't grow the element's own layout box, so
-        // anything below it (Synergy) would sit at the wrong spot / get
-        // overlapped by the now-larger visual text unless we explicitly
-        // reserve the real, scaled-up height for the container.
         setBoxHeight(rect.height * s);
       }
     }

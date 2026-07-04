@@ -29,7 +29,7 @@ async function removeBackground(buffer) {
 // Built with raw pixel buffers deliberately — sharp's extend()/joinChannel() silently
 // upconvert single-channel masks to RGB when given an {r,g,b} background, which corrupts
 // the alpha math. Manual buffers sidestep that entirely.
-async function addGroundShadow(transparentPngBuffer) {
+async function addGroundShadow(transparentPngBuffer, { transparentBg = false } = {}) {
   const meta = await sharp(transparentPngBuffer).metadata();
   const { width, height } = meta;
 
@@ -62,15 +62,19 @@ async function addGroundShadow(transparentPngBuffer) {
   }
   const shadowLayer = await sharp(rgba, { raw: { width, height, channels: 4 } }).png().toBuffer();
 
-  return sharp({
-    create: { width, height, channels: 3, background: { r: 255, g: 255, b: 255 } },
-  })
-    .composite([
-      { input: shadowLayer, left: 0, top: 0 },
-      { input: transparentPngBuffer, left: 0, top: 0 },
-    ])
-    .jpeg({ quality: 92 })
-    .toBuffer();
+  // Hero slides need the cutout to stay transparent so it floats on the custom
+  // background color picked in admin — regular product photos still flatten to
+  // white since those sit on plain white/smoke cards in the catalog either way.
+  const canvas = sharp({
+    create: transparentBg
+      ? { width, height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } }
+      : { width, height, channels: 3, background: { r: 255, g: 255, b: 255 } },
+  }).composite([
+    { input: shadowLayer, left: 0, top: 0 },
+    { input: transparentPngBuffer, left: 0, top: 0 },
+  ]);
+
+  return transparentBg ? canvas.png().toBuffer() : canvas.jpeg({ quality: 92 }).toBuffer();
 }
 
 const REMOVE_BG_KEY = process.env.REMOVE_BG_API_KEY;
@@ -80,11 +84,14 @@ const REMOVE_BG_CONFIGURED = Boolean(REMOVE_BG_KEY) && !REMOVE_BG_KEY.includes("
 // remove.bg is actually configured. Otherwise (toggle off, no key yet, or the call
 // fails for any reason — quota, bad key, etc.) falls back to just normalizing the
 // original photo as-is.
-async function processProductImage(inputBuffer, wantsRemoveBg) {
+async function processProductImage(inputBuffer, wantsRemoveBg, { transparentOutput = false } = {}) {
   if (wantsRemoveBg && REMOVE_BG_CONFIGURED) {
     try {
       const transparentPng = await removeBackground(inputBuffer);
-      return { buffer: await addGroundShadow(transparentPng), ext: "jpg", contentType: "image/jpeg" };
+      const buffer = await addGroundShadow(transparentPng, { transparentBg: transparentOutput });
+      return transparentOutput
+        ? { buffer, ext: "png", contentType: "image/png" }
+        : { buffer, ext: "jpg", contentType: "image/jpeg" };
     } catch (err) {
       console.error("remove.bg failed, falling back to original image:", err.message);
     }
@@ -116,6 +123,7 @@ export async function POST(req) {
 
     let mode2 = formData.get("mode"); // "hero" skips background removal entirely
     const wantsRemoveBg = formData.get("removeBg") === "true";
+    const transparentOutput = formData.get("transparentOutput") === "true";
 
     let result;
     if (mode2 === "hero") {
@@ -126,7 +134,7 @@ export async function POST(req) {
         result = { buffer: await sharp(inputBuffer).jpeg({ quality: 90 }).toBuffer(), ext: "jpg", contentType: "image/jpeg" };
       }
     } else {
-      result = await processProductImage(inputBuffer, wantsRemoveBg);
+      result = await processProductImage(inputBuffer, wantsRemoveBg, { transparentOutput });
     }
 
     console.log("[upload] processed buffer bytes:", result.buffer.length, "ext:", result.ext);

@@ -40,6 +40,7 @@ export default function HeroSlidesAdmin() {
     fd.append("file", file);
     if (removeBg) {
       fd.append("removeBg", "true");
+      fd.append("transparentOutput", "true");
     } else {
       fd.append("mode", "hero");
     }
