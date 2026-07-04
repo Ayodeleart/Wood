@@ -1,49 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-
-// Scales "Olawood Work" to fill the available width edge-to-edge on any
-// screen size. Re-measures on mount, on resize, AND once the wordmark's own
-// web font finishes loading — skipping that last part was the actual bug
-// last round: the very first measurement happened while the browser was
-// still rendering with a fallback system font, so the fit was calculated
-// against the wrong letterforms and never corrected itself afterward.
-function FitText({ text, className, baseSize = 100 }) {
-  const containerRef = useRef(null);
-  const textRef = useRef(null);
-  const [fontSize, setFontSize] = useState(baseSize * 0.4);
-
-  useEffect(() => {
-    function fit() {
-      const container = containerRef.current;
-      const el = textRef.current;
-      if (!container || !el) return;
-      el.style.fontSize = `${baseSize}px`;
-      const naturalWidth = el.getBoundingClientRect().width;
-      const availableWidth = container.getBoundingClientRect().width;
-      if (naturalWidth > 0) setFontSize((availableWidth / naturalWidth) * baseSize);
-    }
-    fit();
-    window.addEventListener("resize", fit);
-    if (typeof document !== "undefined" && document.fonts?.ready) {
-      document.fonts.ready.then(fit);
-    }
-    return () => window.removeEventListener("resize", fit);
-  }, [text, baseSize]);
-
-  return (
-    <div ref={containerRef} className="w-full overflow-hidden">
-      <span
-        ref={textRef}
-        style={{ fontSize: `${fontSize}px`, whiteSpace: "nowrap" }}
-        className={`inline-block ${className}`}
-      >
-        {text}
-      </span>
-    </div>
-  );
-}
 
 const DEFAULT_BG = "#eef3f8";
 
@@ -64,16 +22,22 @@ export default function Hero({ slides = [] }) {
       className="relative w-full h-[68vh] md:h-[88vh] overflow-hidden transition-colors duration-[1600ms] ease-in-out"
       style={{ backgroundColor: bg }}
     >
-      {/* Wordmark layer — sits toward the top, BEHIND the product photo */}
-      <div className="absolute top-[12%] md:top-[14%] left-0 right-0 z-0 px-4 md:px-10">
-        <FitText
-          text="Olawood Work"
-          baseSize={140}
-          className="font-wordmark font-black text-ink tracking-tight leading-none"
-        />
-        {/* Synergy sits directly under the wordmark, not off on its own */}
-        <span className="block font-ui font-medium text-[5vw] md:text-[1.8vw] text-ink/30 tracking-[0.15em] mt-1 md:mt-2 pl-1">
-          SYNERGY
+      {/* Wordmark layer — sits toward the top, BEHIND the product photo.
+          Sized with a fixed vw value (not measured via JS) so it can never
+          overflow or visibly resize after load — 8vw was calculated against
+          the actual character width of "OLAWOOD WORK" in Orbitron Black to
+          stay safely inside the viewport on the narrowest expected phone,
+          and holds the same proportional fit on every wider screen since
+          both the text and the viewport scale together in vw units. */}
+      <div className="absolute top-[12%] md:top-[14%] left-0 right-0 z-0 px-4 md:px-10 overflow-hidden">
+        <h1
+          className="font-wordmark font-black text-ink tracking-tight leading-none uppercase whitespace-nowrap"
+          style={{ fontSize: "clamp(1.8rem, 8vw, 9rem)" }}
+        >
+          Olawood Work
+        </h1>
+        <span className="block font-ui font-medium text-[5vw] md:text-[1.8vw] text-ink/30 tracking-[0.15em] mt-1 md:mt-2 pl-1 uppercase">
+          Synergy
         </span>
       </div>
 
