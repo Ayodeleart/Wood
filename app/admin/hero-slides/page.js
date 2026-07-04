@@ -6,6 +6,7 @@ import Link from "next/link";
 
 const BLANK_FORM = {
   image: "",
+  image_mobile: "",
   wordmark: "OLAWOOD",
   promo_text: "",
   cta_label: "",
@@ -17,7 +18,8 @@ const BLANK_FORM = {
 export default function HeroSlidesAdmin() {
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  const [uploadingDesktop, setUploadingDesktop] = useState(false);
+  const [uploadingMobile, setUploadingMobile] = useState(false);
   const [removeBg, setRemoveBg] = useState(true);
   const [error, setError] = useState("");
   const [form, setForm] = useState(BLANK_FORM);
@@ -32,13 +34,18 @@ export default function HeroSlidesAdmin() {
   }
   useEffect(load, []);
 
-  async function onFileSelected(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Landing slides are now pre-designed flat images (brand name baked in by
+  // whoever designs them) rather than live-composited text + cutout photo —
+  // so they upload as-is, no processing at all. Shop slides still use the
+  // wordmark-behind-product compositing system, so background removal still
+  // applies there.
+  async function uploadFile(file, setUploading, targetField) {
     setUploading(true);
     const fd = new FormData();
     fd.append("file", file);
-    if (removeBg) {
+    if (form.placement === "landing") {
+      fd.append("mode", "hero");
+    } else if (removeBg) {
       fd.append("removeBg", "true");
       fd.append("transparentOutput", "true");
     } else {
@@ -48,7 +55,7 @@ export default function HeroSlidesAdmin() {
       const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setForm((f) => ({ ...f, image: data.url }));
+      setForm((f) => ({ ...f, [targetField]: data.url }));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -60,7 +67,7 @@ export default function HeroSlidesAdmin() {
     e.preventDefault();
     setError("");
     if (!form.image) {
-      setError("Upload a photo first.");
+      setError(form.placement === "landing" ? "Upload a desktop image first." : "Upload a photo first.");
       return;
     }
     const res = await fetch("/api/admin/hero-slides", {
@@ -92,8 +99,9 @@ export default function HeroSlidesAdmin() {
       </Link>
       <h1 className="font-display text-3xl text-ink mb-2">Hero Slides</h1>
       <p className="text-sm text-mute mb-10">
-        <strong>Landing</strong> slides show on the public brand homepage behind the "Olawood Work" wordmark.{" "}
-        <strong>Shop</strong> slides show on the e-commerce homepage (after login or PWA install).
+        <strong>Landing</strong> slides are full, pre-designed images (brand name and layout already built into
+        the image itself — upload one for desktop and one for mobile). <strong>Shop</strong> slides use the
+        live wordmark-behind-product system on the e-commerce homepage.
       </p>
 
       <form onSubmit={addSlide} className="bg-paper border border-line p-6 mb-10">
@@ -103,7 +111,7 @@ export default function HeroSlidesAdmin() {
             <button
               key={p}
               type="button"
-              onClick={() => setForm((f) => ({ ...f, placement: p }))}
+              onClick={() => setForm((f) => ({ ...BLANK_FORM, placement: p }))}
               className={`label px-4 py-2 border transition-colors ${
                 form.placement === p ? "bg-ink text-paper border-ink" : "border-line text-mute"
               }`}
@@ -113,43 +121,57 @@ export default function HeroSlidesAdmin() {
           ))}
         </div>
 
-        <label className="label text-mute block mb-2">
-          Product Photo {form.placement === "landing" ? "(background removed / transparent PNG works best)" : "(transparent PNG works best)"}
-        </label>
-        <label className="flex items-center gap-2 mb-3 text-sm text-ink">
-          <input type="checkbox" checked={removeBg} onChange={(e) => setRemoveBg(e.target.checked)} />
-          Remove background automatically
-        </label>
-        <div className="flex items-center gap-4 mb-6">
-          <div className="relative w-24 h-24 bg-smoke border border-line shrink-0">
-            {uploading && <div className="absolute inset-0 flex items-center justify-center text-[10px] text-mute">Uploading…</div>}
-            {form.image && !uploading && <Image src={form.image} alt="" fill className="object-contain" />}
-          </div>
-          <input type="file" accept="image/*" onChange={onFileSelected} className="text-sm" />
-        </div>
-
-        {form.placement === "landing" && (
+        {form.placement === "landing" ? (
           <>
-            <label className="label text-mute block mb-1">Soft Background Color</label>
-            <p className="text-xs text-mute mb-2">Pick a pale tone that complements this specific photo — e.g. a soft blue behind a blue sofa.</p>
-            <div className="flex items-center gap-3 mb-4">
+            <label className="label text-mute block mb-2">Desktop Image (full hero design, brand name included)</label>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="relative w-32 h-20 bg-smoke border border-line shrink-0">
+                {uploadingDesktop && <div className="absolute inset-0 flex items-center justify-center text-[10px] text-mute">Uploading…</div>}
+                {form.image && !uploadingDesktop && <Image src={form.image} alt="" fill className="object-cover" />}
+              </div>
               <input
-                type="color"
-                value={form.bg_color}
-                onChange={(e) => setForm((f) => ({ ...f, bg_color: e.target.value }))}
-                className="w-12 h-10 border border-line cursor-pointer"
-              />
-              <input
-                value={form.bg_color}
-                onChange={(e) => setForm((f) => ({ ...f, bg_color: e.target.value }))}
-                className="flex-1 border border-line px-3 py-2.5 outline-none focus:border-ink text-sm"
+                type="file"
+                accept="image/*"
+                onChange={(e) => e.target.files?.[0] && uploadFile(e.target.files[0], setUploadingDesktop, "image")}
+                className="text-sm"
               />
             </div>
-          </>
-        )}
 
-        {form.placement === "shop" && (
+            <label className="label text-mute block mb-2">Mobile Image (same design, cropped/laid out for a tall phone screen)</label>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="relative w-14 h-20 bg-smoke border border-line shrink-0">
+                {uploadingMobile && <div className="absolute inset-0 flex items-center justify-center text-[10px] text-mute">Uploading…</div>}
+                {form.image_mobile && !uploadingMobile && <Image src={form.image_mobile} alt="" fill className="object-cover" />}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => e.target.files?.[0] && uploadFile(e.target.files[0], setUploadingMobile, "image_mobile")}
+                className="text-sm"
+              />
+            </div>
+            <p className="text-xs text-mute mb-4">Optional — if you skip this, the desktop image is used on mobile too.</p>
+          </>
+        ) : (
           <>
+            <label className="label text-mute block mb-2">Product Photo (transparent PNG works best)</label>
+            <label className="flex items-center gap-2 mb-3 text-sm text-ink">
+              <input type="checkbox" checked={removeBg} onChange={(e) => setRemoveBg(e.target.checked)} />
+              Remove background automatically
+            </label>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="relative w-24 h-24 bg-smoke border border-line shrink-0">
+                {uploadingDesktop && <div className="absolute inset-0 flex items-center justify-center text-[10px] text-mute">Uploading…</div>}
+                {form.image && !uploadingDesktop && <Image src={form.image} alt="" fill className="object-contain" />}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => e.target.files?.[0] && uploadFile(e.target.files[0], setUploadingDesktop, "image")}
+                className="text-sm"
+              />
+            </div>
+
             <label className="label text-mute block mb-1">Background Wordmark Text</label>
             <input
               value={form.wordmark}
@@ -202,14 +224,11 @@ export default function HeroSlidesAdmin() {
           <div className="space-y-3">
             {group.list.map((s) => (
               <div key={s.id} className="flex items-center gap-4 border border-line p-4">
-                <div
-                  className="relative w-16 h-16 shrink-0"
-                  style={{ backgroundColor: s.bg_color || "var(--smoke)" }}
-                >
-                  <Image src={s.image} alt="" fill className="object-contain" />
+                <div className="relative w-16 h-16 shrink-0 bg-smoke">
+                  <Image src={s.image} alt="" fill className="object-cover" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-ink text-sm">{s.placement === "landing" ? s.bg_color : s.wordmark}</p>
+                  <p className="text-ink text-sm">{s.placement === "landing" ? "Landing slide" : s.wordmark}</p>
                   {s.promo_text && <p className="text-xs text-mute">{s.promo_text}</p>}
                 </div>
                 <button onClick={() => deleteSlide(s.id)} className="label text-red-500 text-xs">
