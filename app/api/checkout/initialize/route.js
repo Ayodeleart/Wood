@@ -11,7 +11,10 @@ export async function POST(req) {
   // Test-mode key, owned by the developer (not the brand) — hardcoded as a fallback
   // per explicit request, matching the same pattern already used in supabaseAdmin.js.
   // Replace with the brand's own live key in Vercel env vars when they're ready.
-  const secretKey = process.env.PAYSTACK_SECRET_KEY || "sk_test_54c95966ab7ffb91aead4a6f3ee8c5b8438049d0";
+  const secretKey = process.env.PAYSTACK_SECRET_KEY;
+  if (!secretKey) {
+    return NextResponse.json({ error: "Payment is not configured yet." }, { status: 500 });
+  }
 
   const sb = supabaseAdmin();
 

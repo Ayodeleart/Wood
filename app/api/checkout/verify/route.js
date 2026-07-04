@@ -7,7 +7,10 @@ export async function GET(req) {
     return NextResponse.json({ error: "Missing reference." }, { status: 400 });
   }
 
-  const secretKey = process.env.PAYSTACK_SECRET_KEY || "sk_test_54c95966ab7ffb91aead4a6f3ee8c5b8438049d0";
+  const secretKey = process.env.PAYSTACK_SECRET_KEY;
+  if (!secretKey) {
+    return NextResponse.json({ error: "Payment is not configured yet." }, { status: 500 });
+  }
 
   const sb = supabaseAdmin();
 
