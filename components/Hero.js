@@ -4,19 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 // Scales text to exactly fill the available width — computed from a real
-// measurement, not a guessed constant (a fixed vw guess is what made the
-// wordmark render too small last round: guessing a font's character width
-// without ever measuring the real, rendered text is inherently unreliable).
+// measurement, not a guessed constant.
 //
-// Two things make this version actually robust where the last two attempts
-// weren't:
-// 1. It waits for the real webfont to finish loading (`document.fonts.ready`)
-//    AND for a settled layout frame (double requestAnimationFrame) before
-//    measuring, so it's never measuring fallback-font metrics by mistake.
-// 2. It stays invisible until that measurement completes, then reveals at
-//    the correct size in one step — instead of rendering at a wrong size
-//    first and visibly resizing afterward (the "moving around" complaint).
-function FitText({ text, className, refSize = 100 }) {
+// Reports its own final rendered geometry via onFit so the parent (Hero) can
+// position the product photo relative to where the wordmark ACTUALLY ends up
+// on screen, instead of guessing a percentage of the section's height. Two
+// independent percentage guesses (wordmark position vs product position)
+// is exactly what produced a good overlap on desktop and a large dead gap
+// on mobile last round — they were never actually connected to each other.
+function FitText({ text, className, refSize = 100, onFit }) {
   const containerRef = useRef(null);
   const textRef = useRef(null);
   const [scale, setScale] = useState(null);
@@ -32,12 +28,6 @@ function FitText({ text, className, refSize = 100 }) {
       const container = containerRef.current;
       const el = textRef.current;
       if (!container || !el || cancelled) return;
-      // getBoundingClientRect() reports the POST-transform visual size, not the
-      // underlying layout size. Without this reset, any re-measurement (mobile
-      // Safari fires resize events constantly as its address bar shows/hides
-      // while scrolling) would measure an already-scaled box instead of the
-      // true unscaled one, compounding the error further with every firing —
-      // which is exactly what produced the wildly oversized wordmark.
       el.style.transform = "none";
       const containerWidth = container.getBoundingClientRect().width;
       const rect = el.getBoundingClientRect();
@@ -45,6 +35,10 @@ function FitText({ text, className, refSize = 100 }) {
         const s = containerWidth / rect.width;
         setScale(s);
         setBoxHeight(rect.height * s);
+        // Let the parent know a new size landed, one more frame after this
+        // paints, so it can measure the real final position (not this one,
+        // which is still mid-update).
+        requestAnimationFrame(() => requestAnimationFrame(() => onFit?.()));
       }
     }
     fit();
@@ -76,9 +70,16 @@ function FitText({ text, className, refSize = 100 }) {
 }
 
 const DEFAULT_BG = "#eef3f8";
+// How far up into the wordmark's own height the product starts overlapping —
+// 0.4 means the product's top edge lands 40% of the way up from the
+// wordmark block's bottom, tuned to roughly match the reference's overlap.
+const OVERLAP_FRACTION = 0.4;
 
 export default function Hero({ slides = [] }) {
   const [index, setIndex] = useState(0);
+  const [productTop, setProductTop] = useState(null);
+  const sectionRef = useRef(null);
+  const wordmarkWrapRef = useRef(null);
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -86,39 +87,64 @@ export default function Hero({ slides = [] }) {
     return () => clearInterval(id);
   }, [slides.length]);
 
+  function measureOverlap() {
+    const section = sectionRef.current;
+    const wrap = wordmarkWrapRef.current;
+    if (!section || !wrap) return;
+    const sectionRect = section.getBoundingClientRect();
+    const wrapRect = wrap.getBoundingClientRect();
+    const wrapHeight = wrapRect.height;
+    const wrapBottom = wrapRect.bottom - sectionRect.top;
+    setProductTop(wrapBottom - wrapHeight * OVERLAP_FRACTION);
+  }
+
+  useEffect(() => {
+    window.addEventListener("resize", measureOverlap);
+    return () => window.removeEventListener("resize", measureOverlap);
+  }, []);
+
   const current = slides[index];
   const bg = current?.bg_color || DEFAULT_BG;
 
   return (
     <section
+      ref={sectionRef}
       className="relative w-full h-[68vh] md:h-[88vh] overflow-hidden transition-colors duration-[1600ms] ease-in-out"
       style={{ backgroundColor: bg }}
     >
       {/* Wordmark layer — sits toward the top, BEHIND the product photo */}
-      <div className="absolute top-[12%] md:top-[14%] left-0 right-0 z-0 px-3 md:px-6">
+      <div ref={wordmarkWrapRef} className="absolute top-[12%] md:top-[14%] left-0 right-0 z-0 px-3 md:px-6">
         <FitText
           text="OLAWOOD WORK"
           refSize={100}
           className="font-wordmark font-black text-ink tracking-tight leading-none"
+          onFit={measureOverlap}
         />
         <span className="block font-ui font-medium text-[5vw] md:text-[1.8vw] text-ink/30 tracking-[0.15em] mt-1 md:mt-2 pl-1 uppercase">
           Synergy
         </span>
       </div>
 
-      {/* Product photo layer — anchored to overlap the wordmark's lower portion
-          directly (not anchored to the bottom of the section, which was the
-          bug: it never actually shared space with the wordmark before).
-          Crossfading only, no slide motion, no dots. */}
-      <div className="absolute top-[20%] md:top-[24%] bottom-[16%] md:bottom-[18%] left-0 right-0 z-10 flex items-center justify-center pointer-events-none">
+      {/* Product photo layer — positioned using the wordmark's REAL measured
+          position (via measureOverlap), not a second independent percentage
+          guess. Hidden until that measurement lands, so it never flashes at
+          the wrong spot first. */}
+      <div
+        className="absolute left-0 right-0 z-10 flex items-start justify-center pointer-events-none"
+        style={{
+          top: productTop !== null ? `${productTop}px` : undefined,
+          bottom: "16%",
+          visibility: productTop === null ? "hidden" : "visible",
+        }}
+      >
         {slides.map((slide, i) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 flex items-center justify-center transition-opacity duration-[1400ms] ease-in-out ${
+            className={`absolute inset-0 flex items-start justify-center transition-opacity duration-[1400ms] ease-in-out ${
               i === index ? "opacity-100" : "opacity-0"
             }`}
           >
-            <div className="relative w-[74%] h-[90%] md:w-[40%] md:h-[92%]">
+            <div className="relative w-[74%] h-[85%] md:w-[40%] md:h-[88%]">
               <Image src={slide.image} alt="Featured piece" fill priority={i === 0} className="object-contain drop-shadow-xl" />
             </div>
           </div>
