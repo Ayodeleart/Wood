@@ -106,17 +106,19 @@ export default function Hero({ slides = [] }) {
         </span>
       </div>
 
-      {/* Product photo layer — overlaps the lower portion of the wordmark, same
-          coordinate space, crossfading only, no slide motion, no dots */}
-      <div className="absolute inset-0 z-10 flex items-end justify-center pb-24 md:pb-28 pointer-events-none">
+      {/* Product photo layer — anchored to overlap the wordmark's lower portion
+          directly (not anchored to the bottom of the section, which was the
+          bug: it never actually shared space with the wordmark before).
+          Crossfading only, no slide motion, no dots. */}
+      <div className="absolute top-[20%] md:top-[24%] bottom-[16%] md:bottom-[18%] left-0 right-0 z-10 flex items-center justify-center pointer-events-none">
         {slides.map((slide, i) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 flex items-end justify-center pb-24 md:pb-28 transition-opacity duration-[1400ms] ease-in-out ${
+            className={`absolute inset-0 flex items-center justify-center transition-opacity duration-[1400ms] ease-in-out ${
               i === index ? "opacity-100" : "opacity-0"
             }`}
           >
-            <div className="relative w-[68%] h-[58%] md:w-[36%] md:h-[68%]">
+            <div className="relative w-[74%] h-[90%] md:w-[40%] md:h-[92%]">
               <Image src={slide.image} alt="Featured piece" fill priority={i === 0} className="object-contain drop-shadow-xl" />
             </div>
           </div>
