@@ -29,15 +29,15 @@ export default function Hero({ slides = [] }) {
             i === index ? "opacity-100" : "opacity-0"
           }`}
         >
-          {/* Desktop image */}
+          {/* Desktop image — falls back to the mobile image if no desktop image was uploaded */}
           <Image
-            src={slide.image}
+            src={slide.image || slide.image_mobile}
             alt="Olawood Work"
             fill
             priority={i === 0}
             className="object-cover hidden md:block"
           />
-          {/* Mobile image — falls back to the desktop image if none was uploaded */}
+          {/* Mobile image — falls back to the desktop image if no mobile image was uploaded */}
           <Image
             src={slide.image_mobile || slide.image}
             alt="Olawood Work"

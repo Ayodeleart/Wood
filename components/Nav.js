@@ -57,7 +57,7 @@ export default function Nav({ categories = [] }) {
             src="/logo/logo-cutout.png"
             alt="Ola Wood"
             fill
-            className={`object-contain object-left ${shop ? "brightness-0 invert" : ""}`}
+            className="object-contain object-left"
             priority
           />
         </Link>

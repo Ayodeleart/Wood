@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, Minus, Plus, X } from "lucide-react";
 import { getCart, removeFromCart, setQuantity } from "@/lib/cart";
+import ShopShell from "@/components/ecommerce/ShopShell";
 
 export default function CartPage() {
   const [cart, setCart] = useState(null);
@@ -44,11 +45,11 @@ export default function CartPage() {
   }
 
   if (cart === null) {
-    return <main className="shop-dark min-h-screen pt-24 px-4" />;
+    return <ShopShell className="pt-24 px-4" />;
   }
 
   return (
-    <main className="shop-dark min-h-screen pt-24 pb-24 px-4">
+    <ShopShell className="pt-24 px-4">
       <h1 className="font-display text-3xl text-shop-text mb-8">Cart</h1>
 
       {cart.length === 0 ? (
@@ -131,6 +132,6 @@ export default function CartPage() {
           </form>
         </>
       )}
-    </main>
+    </ShopShell>
   );
 }

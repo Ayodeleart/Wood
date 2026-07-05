@@ -7,6 +7,7 @@ import { imageFitClass } from "@/lib/imageFit";
 import { getProductDisplayImage } from "@/lib/getProductDisplayImage";
 import CatalogButton from "@/components/CatalogButton";
 import FavoriteButton from "@/components/ecommerce/FavoriteButton";
+import ShopShell from "@/components/ecommerce/ShopShell";
 import { Star } from "lucide-react";
 import { useTheme } from "@/lib/ThemeContext";
 
@@ -28,8 +29,8 @@ export default function CollectionGrid({ category, products, forceContain }) {
   const hasAnyNightImage = products.some((p) => p.night_image_url);
 
   return (
-    <div className="shop-dark min-h-screen transition-colors duration-700">
-      <div className="px-4 md:px-14 pt-32 pb-24">
+    <ShopShell className="transition-colors duration-700">
+      <div className="px-4 md:px-14 pt-32 pb-8">
         <span className="label text-shop-mute">{category.tagline}</span>
         <h1 className="font-display font-semibold text-shop-text text-[clamp(36px,7vw,96px)] leading-[0.9] mt-3 mb-8">
           {category.name}
@@ -100,6 +101,6 @@ export default function CollectionGrid({ category, products, forceContain }) {
           </div>
         )}
       </div>
-    </div>
+    </ShopShell>
   );
 }

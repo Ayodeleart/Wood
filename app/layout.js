@@ -1,5 +1,7 @@
 import "./globals.css";
 import RegisterSW from "@/components/RegisterSW";
+import IntroSplash from "@/components/ecommerce/IntroSplash";
+import { supabasePublic } from "@/lib/supabasePublic";
 
 export const metadata = {
   title: "Ola Wood — Furniture · Interior · Living",
@@ -19,11 +21,18 @@ export const viewport = {
   themeColor: "#000000",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const { data: introSlides } = await supabasePublic
+    .from("shop_hero_slides")
+    .select("*")
+    .eq("placement", "intro")
+    .order("sort_order", { ascending: true });
+
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-paper text-ink">
         {children}
+        <IntroSplash slides={introSlides || []} />
         <RegisterSW />
       </body>
     </html>

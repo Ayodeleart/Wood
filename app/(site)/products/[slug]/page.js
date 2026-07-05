@@ -8,6 +8,7 @@ import BuyButton from "@/components/BuyButton";
 import AddToCartButton from "@/components/ecommerce/AddToCartButton";
 import EnquireLink from "@/components/EnquireLink";
 import FavoriteButton from "@/components/ecommerce/FavoriteButton";
+import ShopShell from "@/components/ecommerce/ShopShell";
 import { Star } from "lucide-react";
 
 export const revalidate = 0;
@@ -35,7 +36,7 @@ export default async function ProductPage({ params }) {
     .map((i) => i.url);
 
   return (
-    <main className="flex-1 shop-dark min-h-screen pb-28 md:pb-16 pt-24">
+    <ShopShell className="pb-28 md:pb-16 pt-24">
       <div className="px-4 md:px-14">
         <Link href={`/collections/${product.categories?.slug}`} className="label text-shop-mute hover:text-shop-text transition-colors">
           ← {product.categories?.name}
@@ -79,15 +80,15 @@ export default async function ProductPage({ params }) {
         </div>
       </div>
 
-      {/* Sticky mobile price + add-to-cart bar, matching the reference app pattern */}
+      {/* Sticky mobile price + add-to-cart bar — sits above the bottom nav (bottom-16), not on top of it */}
       {product.price && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-shop-bg border-t border-shop-line px-4 py-4 flex items-center justify-between gap-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+        <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 bg-shop-bg border-t border-shop-line px-4 py-3 flex items-center justify-between gap-4">
           <span className="text-shop-text text-lg font-medium shrink-0">₦{Number(product.price).toLocaleString()}</span>
           <div className="flex-1 max-w-[220px]">
             <AddToCartButton product={product} image={images[0]} fullWidth />
           </div>
         </div>
       )}
-    </main>
+    </ShopShell>
   );
 }

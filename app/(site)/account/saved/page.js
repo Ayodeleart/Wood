@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import ShopShell from "@/components/ecommerce/ShopShell";
 
 export default function SavedPage() {
   const [items, setItems] = useState(null);
@@ -32,7 +33,7 @@ export default function SavedPage() {
   }
 
   return (
-    <main className="shop-dark min-h-screen pt-24 pb-24 px-4">
+    <ShopShell className="pt-24 px-4">
       <h1 className="font-display text-3xl text-shop-text mb-8">Saved</h1>
 
       {error && <p className="text-red-400 text-sm">{error}</p>}
@@ -68,6 +69,6 @@ export default function SavedPage() {
           })}
         </div>
       )}
-    </main>
+    </ShopShell>
   );
 }

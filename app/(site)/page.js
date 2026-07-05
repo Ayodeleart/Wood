@@ -68,7 +68,7 @@ export default async function Home({ searchParams }) {
   );
 
   const ecommerce = (
-    <main className="flex-1 shop-dark min-h-screen pb-24 md:pb-0">
+    <main className="flex-1 shop-light min-h-screen pb-24 md:pb-0">
       <ShopHero slides={shopSlides} />
       {categories.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-40 px-6 text-center">

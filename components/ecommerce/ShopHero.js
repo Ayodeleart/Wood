@@ -29,7 +29,7 @@ export default function ShopHero({ slides = [] }) {
   return (
     <section className="relative h-[70vh] w-full overflow-hidden bg-shop-bg">
       {/* Big background wordmark */}
-      <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none select-none">
+      <div className="absolute inset-0 flex items-start justify-center pt-10 md:pt-14 overflow-hidden pointer-events-none select-none">
         <span className="font-display font-semibold text-shop-text/90 text-[22vw] leading-none whitespace-nowrap">
           {slide.wordmark || "OLAWOOD"}
         </span>
@@ -38,7 +38,7 @@ export default function ShopHero({ slides = [] }) {
       {/* Product photo in front of the wordmark */}
       {slide.image && (
         <div key={slide.image} className="absolute inset-0 flex items-center justify-center animate-[heroFade_0.8s_ease-out]">
-          <div className="relative w-[70%] md:w-[42%] aspect-square">
+          <div className="relative w-[88%] md:w-[58%] aspect-square">
             <Image src={slide.image} alt={slide.title || "Featured product"} fill className="object-contain drop-shadow-2xl" priority />
           </div>
         </div>
