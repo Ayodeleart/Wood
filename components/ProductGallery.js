@@ -23,7 +23,7 @@ export default function ProductGallery({ images, name, nightImage, forceContain 
   }
 
   if (!images.length) {
-    return <div className="aspect-square bg-smoke flex items-center justify-center text-mute">No photos yet</div>;
+    return <div className="aspect-square bg-shop-surface rounded-2xl flex items-center justify-center text-shop-mute">No photos yet</div>;
   }
 
   const showingNight = isNight && !!nightImage;
@@ -32,8 +32,8 @@ export default function ProductGallery({ images, name, nightImage, forceContain 
   return (
     <div>
       <div
-        className={`relative aspect-square overflow-hidden transition-colors duration-700 ${
-          showingNight ? "bg-[#0c1024]" : "bg-smoke"
+        className={`relative aspect-square overflow-hidden rounded-2xl transition-colors duration-700 ${
+          showingNight ? "bg-[#0c1024]" : "bg-shop-surface"
         }`}
       >
         {showingNight && (
@@ -46,7 +46,7 @@ export default function ProductGallery({ images, name, nightImage, forceContain 
           src={mainSrc}
           alt={name}
           fill
-          className={`${forceContain ? "object-contain" : imageFitClass(mainSrc)} transition-opacity duration-700`}
+          className={`${forceContain ? "object-contain p-6" : imageFitClass(mainSrc)} transition-opacity duration-700`}
           priority
         />
       </div>
@@ -55,14 +55,14 @@ export default function ProductGallery({ images, name, nightImage, forceContain 
         <button
           type="button"
           onClick={handleToggle}
-          className={`mt-4 flex items-center gap-3 px-4 py-2 border transition-colors duration-500 ${
-            showingNight ? "bg-[#0c1024] border-[#0c1024] text-white" : "bg-paper border-line text-ink"
+          className={`mt-4 flex items-center gap-3 px-4 py-2 rounded-full border transition-colors duration-500 ${
+            showingNight ? "bg-[#0c1024] border-[#0c1024] text-white" : "bg-shop-surface border-shop-line text-shop-text"
           }`}
         >
           <span className="label text-xs">See it by day</span>
           <span
             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-500 ${
-              showingNight ? "bg-amber-400/80" : "bg-line"
+              showingNight ? "bg-amber-400/80" : "bg-shop-line"
             }`}
           >
             <span
@@ -87,14 +87,14 @@ export default function ProductGallery({ images, name, nightImage, forceContain 
                   userTouched.current = true;
                   setIsNight(false);
                 }}
-                className={`relative shrink-0 w-16 h-16 bg-smoke overflow-hidden border transition-colors ${
-                  active === i && !showingNight ? "border-ink" : "border-line"
+                className={`relative shrink-0 w-16 h-16 bg-shop-surface overflow-hidden rounded-xl border transition-colors ${
+                  active === i && !showingNight ? "border-shop-text" : "border-shop-line"
                 }`}
               >
                 <Image src={url} alt={`${name} angle ${i + 1}`} fill className="object-cover" />
                 {isLastVisible && (
-                  <div className="absolute inset-0 bg-ink/60 flex items-center justify-center">
-                    <span className="text-paper text-xs font-medium">+{images.length - 8}</span>
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <span className="text-white text-xs font-medium">+{images.length - 8}</span>
                   </div>
                 )}
               </button>

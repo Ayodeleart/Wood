@@ -14,7 +14,7 @@ export default function EnquireLink({ productId }) {
     <a
       href="mailto:olawoodworksynergy@gmail.com"
       onClick={track}
-      className="label mt-10 border-b border-ink/30 pb-2 w-fit hover:border-ink transition-colors"
+      className="label mt-10 border-b border-shop-text/30 pb-2 w-fit hover:border-shop-text text-shop-text transition-colors block"
     >
       Enquire About This Piece
     </a>

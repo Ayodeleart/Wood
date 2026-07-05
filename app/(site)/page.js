@@ -2,13 +2,15 @@ import Hero from "@/components/Hero";
 import BrandStory from "@/components/BrandStory";
 import CategoryTiles from "@/components/CategoryTiles";
 import NeedsGrid from "@/components/NeedsGrid";
-import CollectionRail from "@/components/CollectionRail";
 import Services from "@/components/Services";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import Footer from "@/components/Footer";
+import MobileCTABar from "@/components/MobileCTABar";
 import ShopHero from "@/components/ecommerce/ShopHero";
 import CategoryStickyNav from "@/components/ecommerce/CategoryStickyNav";
+import ShopProductGrid from "@/components/ecommerce/ShopProductGrid";
+import ShopBottomNav from "@/components/ecommerce/ShopBottomNav";
 import HomeGate from "@/components/HomeGate";
 import { getHomeData } from "@/lib/getHomeData";
 import { supabaseServer } from "@/lib/supabaseServer";
@@ -61,24 +63,28 @@ export default async function Home({ searchParams }) {
       <Services />
       <WhyChooseUs />
       <Footer categories={categories} />
+      <MobileCTABar />
     </main>
   );
 
   const ecommerce = (
-    <main className="flex-1">
+    <main className="flex-1 shop-dark min-h-screen pb-24 md:pb-0">
       <ShopHero slides={shopSlides} />
       {categories.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-40 px-6 text-center">
-          <span className="label text-mute mb-3">Collection Coming</span>
-          <h2 className="font-display text-3xl text-ink">Add your first product from the admin panel.</h2>
+          <span className="label text-shop-mute mb-3">Collection Coming</span>
+          <h2 className="font-display text-3xl text-shop-text">Add your first product from the admin panel.</h2>
         </div>
       ) : (
         <>
           <CategoryStickyNav categories={categories} />
-          {categories.map((cat) => <CollectionRail key={cat.slug} category={cat} products={cat.products} />)}
+          {categories.map((cat) => (
+            <ShopProductGrid key={cat.slug} category={cat} products={cat.products} />
+          ))}
         </>
       )}
-      <FeaturedProducts products={featuredProducts} />
+      <FeaturedProducts products={featuredProducts} dark />
+      <ShopBottomNav />
     </main>
   );
 

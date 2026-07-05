@@ -69,18 +69,18 @@ export default function CategoryStickyNav({ categories = [] }) {
   return (
     <div
       ref={barRef}
-      className="sticky z-40 bg-paper/95 backdrop-blur border-b border-line"
+      className="sticky z-40 bg-shop-bg/95 backdrop-blur border-b border-shop-line"
       style={{ top: "var(--nav-h, 72px)" }}
     >
-      <div className="flex items-center gap-2 overflow-x-auto px-6 md:px-14 py-3 no-scrollbar">
+      <div className="flex items-center gap-2 overflow-x-auto px-4 py-3 no-scrollbar">
         {categories.map((c) => (
           <button
             key={c.slug}
             onClick={() => goTo(c.slug)}
             className={`label whitespace-nowrap px-4 py-2 rounded-full border transition-colors duration-300 shrink-0 ${
               active === c.slug
-                ? "bg-accent text-paper border-accent"
-                : "bg-transparent text-mute border-line hover:text-ink hover:border-ink/40"
+                ? "bg-shop-text text-shop-bg border-shop-text"
+                : "bg-transparent text-shop-mute border-shop-line hover:text-shop-text hover:border-shop-mute"
             }`}
           >
             {c.name}

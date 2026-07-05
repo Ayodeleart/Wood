@@ -26,10 +26,10 @@ export default function CollectionGrid({ category, products, forceContain }) {
   const hasAnyNightImage = products.some((p) => p.night_image_url);
 
   return (
-    <div className={`transition-colors duration-700 ${isNight ? "theme-night" : "theme-day"}`}>
-      <div className="px-6 md:px-14 pt-32 pb-24">
-        <span className="label text-mute">{category.tagline}</span>
-        <h1 className="font-display font-semibold text-ink text-[clamp(40px,7vw,96px)] leading-[0.9] mt-3 mb-8">
+    <div className="shop-dark min-h-screen transition-colors duration-700">
+      <div className="px-4 md:px-14 pt-32 pb-24">
+        <span className="label text-shop-mute">{category.tagline}</span>
+        <h1 className="font-display font-semibold text-shop-text text-[clamp(36px,7vw,96px)] leading-[0.9] mt-3 mb-8">
           {category.name}
         </h1>
 
@@ -40,14 +40,12 @@ export default function CollectionGrid({ category, products, forceContain }) {
             <button
               type="button"
               onClick={handleToggle}
-              className={`flex items-center gap-3 px-4 py-2 border transition-colors duration-500 ${
-                isNight ? "bg-smoke border-line text-ink" : "bg-paper border-line text-ink"
-              }`}
+              className="flex items-center gap-3 px-4 py-2 rounded-full border border-shop-line bg-shop-surface text-shop-text transition-colors duration-500"
             >
               <span className="label text-xs">Day</span>
               <span
                 className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-500 ${
-                  isNight ? "bg-amber-400/80" : "bg-line"
+                  isNight ? "bg-amber-400/80" : "bg-shop-line"
                 }`}
               >
                 <span
@@ -62,27 +60,27 @@ export default function CollectionGrid({ category, products, forceContain }) {
         </div>
 
         {products.length === 0 ? (
-          <p className="text-mute">No products in this collection yet.</p>
+          <p className="text-shop-mute">No products in this collection yet.</p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-14">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10">
             {products.map((p) => {
               const src = getProductDisplayImage(p, isNight);
               return (
-                <Link key={p.id} href={`/products/${p.slug}`} className="group flex flex-col">
-                  <div className="relative aspect-square bg-smoke overflow-hidden">
+                <Link key={p.id} href={`/products/${p.slug}`} className="group flex flex-col active:scale-[0.97] transition-transform duration-150">
+                  <div className="relative aspect-square bg-shop-surface rounded-2xl overflow-hidden">
                     {src && (
                       <Image
                         src={src}
                         alt={p.name}
                         fill
-                        className={`${forceContain ? "object-contain" : imageFitClass(src)} transition-transform duration-500 group-hover:scale-[1.04]`}
+                        className={`${forceContain ? "object-contain p-4" : imageFitClass(src)} transition-transform duration-500 group-hover:scale-[1.04]`}
                       />
                     )}
                   </div>
-                  <div className="pt-4 flex items-baseline justify-between">
-                    <h3 className="font-display text-base md:text-lg text-ink">{p.name}</h3>
+                  <div className="pt-3 flex items-baseline justify-between">
+                    <h3 className="font-display text-base md:text-lg text-shop-text">{p.name}</h3>
                     {p.price && (
-                      <span className="text-sm text-mute">₦{Number(p.price).toLocaleString()}</span>
+                      <span className="text-sm text-shop-mute">₦{Number(p.price).toLocaleString()}</span>
                     )}
                   </div>
                 </Link>

@@ -18,8 +18,8 @@ export default function ShopHero({ slides = [] }) {
 
   if (slides.length === 0) {
     return (
-      <section className="relative h-[80vh] w-full flex items-center justify-center bg-smoke">
-        <p className="text-mute label">Add hero slides from the admin panel</p>
+      <section className="relative h-[70vh] w-full flex items-center justify-center bg-shop-surface">
+        <p className="text-shop-mute label">Add hero slides from the admin panel</p>
       </section>
     );
   }
@@ -27,10 +27,10 @@ export default function ShopHero({ slides = [] }) {
   const slide = slides[index];
 
   return (
-    <section className="relative h-[80vh] w-full overflow-hidden bg-paper">
+    <section className="relative h-[70vh] w-full overflow-hidden bg-shop-bg">
       {/* Big background wordmark */}
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none select-none">
-        <span className="font-display font-semibold text-ink/90 text-[22vw] leading-none whitespace-nowrap">
+        <span className="font-display font-semibold text-shop-text/90 text-[22vw] leading-none whitespace-nowrap">
           {slide.wordmark || "OLAWOOD"}
         </span>
       </div>
@@ -46,10 +46,10 @@ export default function ShopHero({ slides = [] }) {
 
       {/* Promo banner, bottom-left */}
       {(slide.promo_text || slide.cta_label) && (
-        <div className="absolute left-6 md:left-14 bottom-10 md:bottom-14 bg-paper/95 backdrop-blur px-6 py-5 max-w-xs shadow-lg">
-          {slide.promo_text && <p className="text-ink text-sm mb-3">{slide.promo_text}</p>}
+        <div className="absolute left-4 bottom-8 bg-shop-surface/95 backdrop-blur px-6 py-5 max-w-xs shadow-lg rounded-2xl">
+          {slide.promo_text && <p className="text-shop-text text-sm mb-3">{slide.promo_text}</p>}
           {slide.cta_label && slide.cta_href && (
-            <Link href={slide.cta_href} className="label bg-ink text-paper px-5 py-2.5 inline-block">
+            <Link href={slide.cta_href} className="label bg-shop-text text-shop-bg px-5 py-2.5 inline-block rounded-full">
               {slide.cta_label}
             </Link>
           )}
@@ -58,14 +58,14 @@ export default function ShopHero({ slides = [] }) {
 
       {/* Slide indicators */}
       {slides.length > 1 && (
-        <div className="absolute bottom-6 right-6 md:right-14 flex gap-2">
+        <div className="absolute bottom-6 right-4 flex gap-2">
           {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => setIndex(i)}
               aria-label={`Show slide ${i + 1}`}
               className={`h-1.5 rounded-full transition-all duration-500 ${
-                index === i ? "w-6 bg-ink" : "w-1.5 bg-ink/30"
+                index === i ? "w-6 bg-shop-text" : "w-1.5 bg-shop-text/30"
               }`}
             />
           ))}

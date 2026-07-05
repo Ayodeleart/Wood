@@ -28,11 +28,11 @@ export default function CatalogButton({ categorySlug, categoryName }) {
         type="button"
         onClick={send}
         disabled={loading}
-        className="label border-b border-ink/30 pb-2 hover:border-ink transition-colors disabled:opacity-50"
+        className="label border-b border-shop-text/30 pb-2 hover:border-shop-text text-shop-text transition-colors disabled:opacity-50"
       >
         {loading ? "Preparing catalog…" : "Send This Catalog via WhatsApp"}
       </button>
-      {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
+      {error && <p className="text-sm text-red-400 mt-2">{error}</p>}
     </div>
   );
 }

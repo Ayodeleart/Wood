@@ -127,3 +127,16 @@ textarea {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* E-commerce dark theme — a fixed black app-like experience, distinct from
+   the light landing brand and from the separate day/night product-photo
+   toggle. Wrap the whole shop tree in .shop-dark. */
+.shop-dark {
+  --shop-bg: #000000;
+  --shop-surface: #121212;
+  --shop-line: #262626;
+  --shop-text: #ffffff;
+  --shop-mute: #8a8a8a;
+  background-color: var(--shop-bg);
+  color: var(--shop-text);
+}

@@ -14,6 +14,11 @@ export default {
         line: "var(--line)",
         mute: "var(--mute)",
         accent: "var(--accent)",
+        "shop-bg": "var(--shop-bg)",
+        "shop-surface": "var(--shop-surface)",
+        "shop-line": "var(--shop-line)",
+        "shop-text": "var(--shop-text)",
+        "shop-mute": "var(--shop-mute)",
       },
       fontFamily: {
         display: ["var(--font-display)"],
