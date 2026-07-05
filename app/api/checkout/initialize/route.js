@@ -2,15 +2,16 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req) {
-  const { product_id, name, email, phone } = await req.json();
+  const { product_id, items, name, email, phone } = await req.json();
 
-  if (!product_id || !name || !email) {
-    return NextResponse.json({ error: "Name, email, and product are required." }, { status: 400 });
+  // Two shapes: a single product_id (existing product-page "Buy Now" flow),
+  // or an `items` array of { product_id, quantity } from the cart page.
+  const cartItems = items?.length ? items : product_id ? [{ product_id, quantity: 1 }] : null;
+
+  if (!cartItems || !name || !email) {
+    return NextResponse.json({ error: "Name, email, and at least one item are required." }, { status: 400 });
   }
 
-  // Test-mode key, owned by the developer (not the brand) — hardcoded as a fallback
-  // per explicit request, matching the same pattern already used in supabaseAdmin.js.
-  // Replace with the brand's own live key in Vercel env vars when they're ready.
   const secretKey = process.env.PAYSTACK_SECRET_KEY;
   if (!secretKey) {
     return NextResponse.json({ error: "Payment is not configured yet." }, { status: 500 });
@@ -18,30 +19,43 @@ export async function POST(req) {
 
   const sb = supabaseAdmin();
 
-  const { data: product, error: productError } = await sb
+  const ids = cartItems.map((i) => i.product_id);
+  const { data: products, error: productError } = await sb
     .from("products")
     .select("id, name, price")
-    .eq("id", product_id)
-    .single();
+    .in("id", ids);
 
-  if (productError || !product) {
+  if (productError || !products?.length) {
     return NextResponse.json({ error: "Product not found." }, { status: 404 });
   }
-  if (!product.price) {
-    return NextResponse.json({ error: "This product has no price set yet — contact us directly." }, { status: 400 });
+
+  const byId = Object.fromEntries(products.map((p) => [p.id, p]));
+  let total = 0;
+  const orderRows = [];
+  for (const item of cartItems) {
+    const product = byId[item.product_id];
+    if (!product || !product.price) {
+      return NextResponse.json({ error: `"${product?.name || "One item"}" has no price set — contact us directly.` }, { status: 400 });
+    }
+    const qty = Math.max(1, Number(item.quantity) || 1);
+    const lineTotal = Number(product.price) * qty;
+    total += lineTotal;
+    orderRows.push({ product_id: product.id, amount: lineTotal, quantity: qty });
   }
 
   const reference = `wood_${crypto.randomUUID().replace(/-/g, "")}`;
 
-  const { error: orderError } = await sb.from("orders").insert({
-    product_id: product.id,
-    customer_name: name,
-    customer_email: email,
-    customer_phone: phone || null,
-    amount: product.price,
-    reference,
-    status: "pending",
-  });
+  const { error: orderError } = await sb.from("orders").insert(
+    orderRows.map((row) => ({
+      product_id: row.product_id,
+      customer_name: name,
+      customer_email: email,
+      customer_phone: phone || null,
+      amount: row.amount,
+      reference,
+      status: "pending",
+    }))
+  );
   if (orderError) {
     return NextResponse.json({ error: orderError.message }, { status: 500 });
   }
@@ -56,10 +70,14 @@ export async function POST(req) {
     },
     body: JSON.stringify({
       email,
-      amount: Math.round(Number(product.price) * 100), // kobo
+      amount: Math.round(total * 100), // kobo
       reference,
       callback_url: `${origin}/checkout/success?reference=${reference}`,
-      metadata: { product_id: product.id, product_name: product.name, customer_name: name, customer_phone: phone || "" },
+      metadata: {
+        product_ids: orderRows.map((r) => r.product_id),
+        customer_name: name,
+        customer_phone: phone || "",
+      },
     }),
   });
 

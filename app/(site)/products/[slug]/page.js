@@ -5,7 +5,10 @@ import { supabasePublic } from "@/lib/supabasePublic";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import ProductGallery from "@/components/ProductGallery";
 import BuyButton from "@/components/BuyButton";
+import AddToCartButton from "@/components/ecommerce/AddToCartButton";
 import EnquireLink from "@/components/EnquireLink";
+import FavoriteButton from "@/components/ecommerce/FavoriteButton";
+import { Star } from "lucide-react";
 
 export const revalidate = 0;
 
@@ -47,17 +50,29 @@ export default async function ProductPage({ params }) {
           />
 
           <div className="flex flex-col pb-4">
-            <h1 className="font-display font-semibold text-shop-text text-[clamp(28px,5vw,48px)] leading-[0.95]">
-              {product.name}
-            </h1>
-            <p className="text-shop-mute mt-3 text-lg">
-              {product.price ? `₦${Number(product.price).toLocaleString()}` : "Price on request"}
-            </p>
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="font-display font-semibold text-shop-text text-[clamp(28px,5vw,48px)] leading-[0.95]">
+                {product.name}
+              </h1>
+              <FavoriteButton productId={product.id} className="shrink-0" />
+            </div>
+            <div className="flex items-center gap-3 mt-3">
+              <p className="text-shop-mute text-lg">
+                {product.price ? `₦${Number(product.price).toLocaleString()}` : "Price on request"}
+              </p>
+              {product.rating && (
+                <span className="flex items-center gap-1 text-sm text-shop-mute">
+                  <Star size={14} className="fill-amber-400 text-amber-400" />
+                  {Number(product.rating).toFixed(1)}
+                </span>
+              )}
+            </div>
             {product.description && (
               <p className="mt-6 text-shop-text/70 leading-relaxed max-w-md">{product.description}</p>
             )}
-            <div className="hidden md:block">
+            <div className="hidden md:flex items-center gap-3 flex-wrap">
               <EnquireLink productId={product.id} />
+              <AddToCartButton product={product} image={images[0]} />
               <BuyButton productId={product.id} price={product.price} />
             </div>
           </div>
@@ -69,7 +84,7 @@ export default async function ProductPage({ params }) {
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-shop-bg border-t border-shop-line px-4 py-4 flex items-center justify-between gap-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
           <span className="text-shop-text text-lg font-medium shrink-0">₦{Number(product.price).toLocaleString()}</span>
           <div className="flex-1 max-w-[220px]">
-            <BuyButton productId={product.id} price={product.price} fullWidth />
+            <AddToCartButton product={product} image={images[0]} fullWidth />
           </div>
         </div>
       )}

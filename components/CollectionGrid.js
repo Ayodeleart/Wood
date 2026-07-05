@@ -6,6 +6,8 @@ import Link from "next/link";
 import { imageFitClass } from "@/lib/imageFit";
 import { getProductDisplayImage } from "@/lib/getProductDisplayImage";
 import CatalogButton from "@/components/CatalogButton";
+import FavoriteButton from "@/components/ecommerce/FavoriteButton";
+import { Star } from "lucide-react";
 import { useTheme } from "@/lib/ThemeContext";
 
 export default function CollectionGrid({ category, products, forceContain }) {
@@ -67,7 +69,7 @@ export default function CollectionGrid({ category, products, forceContain }) {
               const src = getProductDisplayImage(p, isNight);
               return (
                 <Link key={p.id} href={`/products/${p.slug}`} className="group flex flex-col active:scale-[0.97] transition-transform duration-150">
-                  <div className="relative aspect-square bg-shop-surface rounded-2xl overflow-hidden">
+                  <div className="relative aspect-square bg-shop-tile rounded-2xl overflow-hidden">
                     {src && (
                       <Image
                         src={src}
@@ -76,12 +78,21 @@ export default function CollectionGrid({ category, products, forceContain }) {
                         className={`${forceContain ? "object-contain p-4" : imageFitClass(src)} transition-transform duration-500 group-hover:scale-[1.04]`}
                       />
                     )}
+                    <FavoriteButton productId={p.id} className="absolute top-2 right-2" />
                   </div>
                   <div className="pt-3 flex items-baseline justify-between">
                     <h3 className="font-display text-base md:text-lg text-shop-text">{p.name}</h3>
-                    {p.price && (
-                      <span className="text-sm text-shop-mute">₦{Number(p.price).toLocaleString()}</span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {p.rating && (
+                        <span className="flex items-center gap-1 text-xs text-shop-mute">
+                          <Star size={12} className="fill-amber-400 text-amber-400" />
+                          {Number(p.rating).toFixed(1)}
+                        </span>
+                      )}
+                      {p.price && (
+                        <span className="text-sm text-shop-mute">₦{Number(p.price).toLocaleString()}</span>
+                      )}
+                    </div>
                   </div>
                 </Link>
               );

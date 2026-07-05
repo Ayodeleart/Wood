@@ -19,6 +19,7 @@ export default {
         "shop-line": "var(--shop-line)",
         "shop-text": "var(--shop-text)",
         "shop-mute": "var(--shop-mute)",
+        "shop-tile": "var(--shop-tile)",
       },
       fontFamily: {
         display: ["var(--font-display)"],

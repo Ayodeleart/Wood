@@ -27,7 +27,7 @@ export default function FeaturedProducts({ products, dark = false }) {
           return (
           <Reveal key={p.id} delay={i * 90}>
           <Link href={`/products/${p.slug}`} className="group flex flex-col">
-            <div className={`relative aspect-square overflow-hidden ${dark ? "bg-shop-surface rounded-2xl" : "bg-smoke"}`}>
+            <div className={`relative aspect-square overflow-hidden ${dark ? "bg-shop-tile rounded-2xl" : "bg-smoke"}`}>
               {displayImage && (
                 <Image
                   src={displayImage}

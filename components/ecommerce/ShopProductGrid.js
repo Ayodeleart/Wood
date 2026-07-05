@@ -6,6 +6,8 @@ import Link from "next/link";
 import { imageFitClass } from "@/lib/imageFit";
 import { getProductDisplayImage } from "@/lib/getProductDisplayImage";
 import { useTheme } from "@/lib/ThemeContext";
+import FavoriteButton from "@/components/ecommerce/FavoriteButton";
+import { Star } from "lucide-react";
 
 function ProductCard({ product, night, index }) {
   const ref = useRef(null);
@@ -39,7 +41,7 @@ function ProductCard({ product, night, index }) {
         transition: `opacity 420ms cubic-bezier(0.22,1,0.36,1) ${(index % 6) * 60}ms, transform 420ms cubic-bezier(0.22,1,0.36,1) ${(index % 6) * 60}ms`,
       }}
     >
-      <div className="relative aspect-square bg-shop-surface rounded-2xl overflow-hidden">
+      <div className="relative aspect-square bg-shop-tile rounded-2xl overflow-hidden">
         {displayImage && (
           <Image
             src={displayImage}
@@ -48,12 +50,21 @@ function ProductCard({ product, night, index }) {
             className={`${imageFitClass(displayImage)} transition-transform duration-500 group-hover:scale-[1.05] p-4`}
           />
         )}
+        <FavoriteButton productId={product.id} className="absolute top-2 right-2" />
       </div>
       <div className="pt-3 px-0.5">
         <h3 className="text-shop-text text-sm leading-snug truncate">{product.name}</h3>
-        {product.price && (
-          <p className="text-shop-mute text-sm mt-0.5">₦{Number(product.price).toLocaleString()}</p>
-        )}
+        <div className="flex items-center justify-between mt-0.5">
+          {product.price && (
+            <p className="text-shop-mute text-sm">₦{Number(product.price).toLocaleString()}</p>
+          )}
+          {product.rating && (
+            <span className="flex items-center gap-1 text-xs text-shop-mute">
+              <Star size={12} className="fill-amber-400 text-amber-400" />
+              {Number(product.rating).toFixed(1)}
+            </span>
+          )}
+        </div>
       </div>
     </Link>
   );

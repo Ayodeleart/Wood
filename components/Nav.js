@@ -4,11 +4,13 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { User } from "lucide-react";
+import { useIsShopMode } from "@/lib/useIsShopMode";
 
 export default function Nav({ categories = [] }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const headerRef = useRef(null);
+  const shop = useIsShopMode();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -45,9 +47,9 @@ export default function Nav({ categories = [] }) {
     <>
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 bg-paper border-b transition-all duration-300 ${
-          scrolled || open ? "py-3 border-line shadow-sm" : "py-4 border-line/60"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 border-b transition-all duration-300 ${
+          shop ? "bg-shop-bg border-shop-line" : "bg-paper"
+        } ${scrolled || open ? "py-3 shadow-sm" : "py-4"} ${!shop ? (scrolled || open ? "border-line" : "border-line/60") : ""}`}
       >
         {/* Logo */}
         <Link href="/" className="relative h-9 w-[150px]" onClick={() => setOpen(false)}>
@@ -55,56 +57,63 @@ export default function Nav({ categories = [] }) {
             src="/logo/logo-cutout.png"
             alt="Ola Wood"
             fill
-            className="object-contain object-left"
+            className={`object-contain object-left ${shop ? "brightness-0 invert" : ""}`}
             priority
           />
         </Link>
 
-        {/* Desktop nav links — hidden on mobile */}
-        <nav className="hidden md:flex items-center gap-8">
-          <Link href="/" className="text-sm text-ink hover:text-mute transition-colors">Home</Link>
-          <Link href="/#services" className="text-sm text-ink hover:text-mute transition-colors">Services</Link>
-          <Link href="/#contact" className="text-sm text-ink hover:text-mute transition-colors">Contact</Link>
-          <div className="relative group">
-            <button className="text-sm text-ink hover:text-mute transition-colors">
-              Collections ↓
-            </button>
-            {/* Mega dropdown */}
-            <div className="absolute top-full right-0 pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
-              <div className="bg-paper border border-line p-6 w-[400px] grid grid-cols-2 gap-x-8 gap-y-2 shadow-lg">
-                {categories.map((c) => (
-                  <Link
-                    key={c.slug}
-                    href={`/collections/${c.slug}`}
-                    className="text-sm text-ink hover:text-mute transition-colors py-1 truncate"
-                  >
-                    {c.name}
-                  </Link>
-                ))}
+        {/* Desktop nav links — hidden on mobile, and hidden entirely in shop mode
+            since Services/Contact are landing-page anchors that don't apply here */}
+        {!shop && (
+          <nav className="hidden md:flex items-center gap-8">
+            <Link href="/" className="text-sm text-ink hover:text-mute transition-colors">Home</Link>
+            <Link href="/#services" className="text-sm text-ink hover:text-mute transition-colors">Services</Link>
+            <Link href="/#contact" className="text-sm text-ink hover:text-mute transition-colors">Contact</Link>
+            <div className="relative group">
+              <button className="text-sm text-ink hover:text-mute transition-colors">
+                Collections ↓
+              </button>
+              {/* Mega dropdown */}
+              <div className="absolute top-full right-0 pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
+                <div className="bg-paper border border-line p-6 w-[400px] grid grid-cols-2 gap-x-8 gap-y-2 shadow-lg">
+                  {categories.map((c) => (
+                    <Link
+                      key={c.slug}
+                      href={`/collections/${c.slug}`}
+                      className="text-sm text-ink hover:text-mute transition-colors py-1 truncate"
+                    >
+                      {c.name}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        </nav>
+          </nav>
+        )}
 
         <div className="flex items-center gap-3">
           <Link
-            href="/account/login"
+            href="/account"
             aria-label="Account"
-            className="flex items-center justify-center w-9 h-9 border border-line rounded-full text-ink hover:border-ink transition-colors shrink-0"
+            className={`flex items-center justify-center w-9 h-9 border rounded-full transition-colors shrink-0 ${
+              shop ? "border-shop-line text-shop-text hover:border-shop-text" : "border-line text-ink hover:border-ink"
+            }`}
           >
             <User size={15} strokeWidth={1.5} />
           </Link>
 
-          {/* Hamburger — mobile only */}
-          <button
-            onClick={() => setOpen((v) => !v)}
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            className="md:hidden flex flex-col gap-[5px] w-8 h-8 items-end justify-center"
-          >
-            <span className={`block h-[1.5px] bg-ink transition-all duration-300 ${open ? "w-7 rotate-45 translate-y-[3.5px]" : "w-7"}`} />
-            <span className={`block h-[1.5px] bg-ink transition-all duration-300 ${open ? "w-7 -rotate-45 -translate-y-[3.5px]" : "w-5"}`} />
-          </button>
+          {/* Hamburger — mobile only, hidden in shop mode (bottom nav covers navigation there) */}
+          {!shop && (
+            <button
+              onClick={() => setOpen((v) => !v)}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              className="md:hidden flex flex-col gap-[5px] w-8 h-8 items-end justify-center"
+            >
+              <span className={`block h-[1.5px] bg-ink transition-all duration-300 ${open ? "w-7 rotate-45 translate-y-[3.5px]" : "w-7"}`} />
+              <span className={`block h-[1.5px] bg-ink transition-all duration-300 ${open ? "w-7 -rotate-45 -translate-y-[3.5px]" : "w-5"}`} />
+            </button>
+          )}
         </div>
       </header>
 

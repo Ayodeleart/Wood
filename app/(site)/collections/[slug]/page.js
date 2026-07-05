@@ -17,7 +17,7 @@ export default async function CollectionPage({ params }) {
 
   const { data: products } = await supabasePublic
     .from("products")
-    .select("id, slug, name, price, night_image_url, product_images(url, sort_order)")
+    .select("id, slug, name, price, rating, night_image_url, product_images(url, sort_order)")
     .eq("category_id", category.id)
     .order("created_at", { ascending: false });
 

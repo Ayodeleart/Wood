@@ -33,7 +33,7 @@ export default function ProductGallery({ images, name, nightImage, forceContain 
     <div>
       <div
         className={`relative aspect-square overflow-hidden rounded-2xl transition-colors duration-700 ${
-          showingNight ? "bg-[#0c1024]" : "bg-shop-surface"
+          showingNight ? "bg-[#0c1024]" : "bg-shop-tile"
         }`}
       >
         {showingNight && (
@@ -87,7 +87,7 @@ export default function ProductGallery({ images, name, nightImage, forceContain 
                   userTouched.current = true;
                   setIsNight(false);
                 }}
-                className={`relative shrink-0 w-16 h-16 bg-shop-surface overflow-hidden rounded-xl border transition-colors ${
+                className={`relative shrink-0 w-16 h-16 bg-shop-tile overflow-hidden rounded-xl border transition-colors ${
                   active === i && !showingNight ? "border-shop-text" : "border-shop-line"
                 }`}
               >
