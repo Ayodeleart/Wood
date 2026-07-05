@@ -12,20 +12,17 @@ export async function POST(req) {
   if (!file) return NextResponse.json({ error: "No file provided." }, { status: 400 });
 
   const admin = supabaseAdmin();
-
-  // Create the bucket on first use rather than requiring a manual dashboard
-  // step — harmless if it already exists.
-  await admin.storage.createBucket("avatars", { public: true }).catch(() => {});
+  const bucket = process.env.SUPABASE_STORAGE_BUCKET || "octopusfur-media";
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const path = `${user.id}-${Date.now()}.jpg`;
+  const path = `avatars/${user.id}-${Date.now()}.jpg`;
 
   const { error: uploadError } = await admin.storage
-    .from("avatars")
+    .from(bucket)
     .upload(path, buffer, { contentType: file.type || "image/jpeg", upsert: true });
   if (uploadError) return NextResponse.json({ error: uploadError.message }, { status: 500 });
 
-  const { data: publicUrlData } = admin.storage.from("avatars").getPublicUrl(path);
+  const { data: publicUrlData } = admin.storage.from(bucket).getPublicUrl(path);
   const avatarUrl = publicUrlData.publicUrl;
 
   const { data: current } = await admin.auth.admin.getUserById(user.id);
