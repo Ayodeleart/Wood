@@ -78,7 +78,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <ShopShell className="pt-24 pb-16 px-4">
+    <ShopShell className="pt-6 pb-16 px-4">
       <h1 className="font-display text-2xl text-shop-text mb-8">Edit Profile</h1>
 
       <div className="flex justify-center mb-8">

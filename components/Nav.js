@@ -19,21 +19,6 @@ export default function Nav({ categories = [] }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Publish the header's real rendered height as a CSS var so other sticky
-  // elements (e.g. the e-commerce category sub-nav) can offset below it
-  // without hardcoding a pixel value that drifts when this header's padding changes.
-  useEffect(() => {
-    if (!headerRef.current) return;
-    const el = headerRef.current;
-    const setVar = () => {
-      document.documentElement.style.setProperty("--nav-h", `${el.offsetHeight}px`);
-    };
-    setVar();
-    const ro = new ResizeObserver(setVar);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [scrolled, open]);
-
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
@@ -42,6 +27,11 @@ export default function Nav({ categories = [] }) {
   const mid = Math.ceil(categories.length / 2);
   const col1 = categories.slice(0, mid);
   const col2 = categories.slice(mid);
+
+  // Shop pages have their own floating bottom nav with Account access built
+  // in — the top header (logo + account icon) was pure redundant dead space
+  // there, so it renders nothing at all in shop mode now.
+  if (shop) return null;
 
   return (
     <>

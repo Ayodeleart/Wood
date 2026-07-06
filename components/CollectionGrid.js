@@ -30,7 +30,7 @@ export default function CollectionGrid({ category, products, forceContain }) {
 
   return (
     <ShopShell className="transition-colors duration-700">
-      <div className="px-4 md:px-14 pt-32 pb-8">
+      <div className="px-4 md:px-14 pt-6 pb-8">
         <span className="label text-shop-mute">{category.tagline}</span>
         <h1 className="font-display font-semibold text-shop-text text-[clamp(36px,7vw,96px)] leading-[0.9] mt-3 mb-8">
           {category.name}

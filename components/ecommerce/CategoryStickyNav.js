@@ -54,15 +54,11 @@ export default function CategoryStickyNav({ categories = [] }) {
   function goTo(slug) {
     const el = document.getElementById(`cat-${slug}`);
     if (!el) return;
-    const navH = parseInt(
-      getComputedStyle(document.documentElement).getPropertyValue("--nav-h") || "72",
-      10
-    );
     const subnavH = parseInt(
       getComputedStyle(document.documentElement).getPropertyValue("--subnav-h") || "52",
       10
     );
-    const top = el.getBoundingClientRect().top + window.scrollY - navH - subnavH;
+    const top = el.getBoundingClientRect().top + window.scrollY - subnavH;
     window.scrollTo({ top, behavior: "smooth" });
   }
 
@@ -70,7 +66,7 @@ export default function CategoryStickyNav({ categories = [] }) {
     <div
       ref={barRef}
       className="sticky z-40 bg-shop-bg/95 backdrop-blur border-b border-shop-line"
-      style={{ top: "var(--nav-h, 72px)" }}
+      style={{ top: "0px" }}
     >
       <div className="flex items-center gap-2 overflow-x-auto px-4 py-3 no-scrollbar">
         {categories.map((c) => (

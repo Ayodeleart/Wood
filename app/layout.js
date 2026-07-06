@@ -1,6 +1,7 @@
 import "./globals.css";
 import RegisterSW from "@/components/RegisterSW";
 import IntroSplash from "@/components/ecommerce/IntroSplash";
+import { ShopThemeProvider } from "@/lib/ShopThemeContext";
 import { supabasePublic } from "@/lib/supabasePublic";
 
 export const metadata = {
@@ -31,8 +32,10 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-paper text-ink">
-        {children}
-        <IntroSplash slides={introSlides || []} />
+        <ShopThemeProvider>
+          {children}
+          <IntroSplash slides={introSlides || []} />
+        </ShopThemeProvider>
         <RegisterSW />
       </body>
     </html>

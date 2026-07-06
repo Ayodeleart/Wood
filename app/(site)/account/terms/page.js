@@ -2,7 +2,7 @@ import ShopShell from "@/components/ecommerce/ShopShell";
 
 export default function TermsPage() {
   return (
-    <ShopShell className="pt-24 pb-16 px-4">
+    <ShopShell className="pt-6 pb-16 px-4">
       <h1 className="font-display text-2xl text-shop-text mb-6">Terms and Conditions</h1>
       <div className="text-shop-mute leading-relaxed max-w-md space-y-4 text-sm">
         <p>

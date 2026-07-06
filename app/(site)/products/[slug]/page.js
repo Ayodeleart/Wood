@@ -36,7 +36,7 @@ export default async function ProductPage({ params }) {
     .map((i) => i.url);
 
   return (
-    <ShopShell className="pb-28 md:pb-16 pt-24">
+    <ShopShell className="pb-28 md:pb-16 pt-6">
       <div className="px-4 md:px-14">
         <Link href={`/collections/${product.categories?.slug}`} className="label text-shop-mute hover:text-shop-text transition-colors">
           ← {product.categories?.name}

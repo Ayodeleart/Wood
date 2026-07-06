@@ -27,17 +27,25 @@ export default function ShopHero({ slides = [] }) {
   const slide = slides[index];
 
   return (
-    <section className="relative h-[70vh] w-full overflow-hidden bg-shop-bg">
-      {/* Big background wordmark */}
-      <div className="absolute inset-0 flex items-start justify-center pt-10 md:pt-14 overflow-hidden pointer-events-none select-none">
-        <span className="font-display font-semibold text-shop-text/90 text-[22vw] leading-none whitespace-nowrap">
+    <section className="relative h-[52vh] md:h-[60vh] w-full overflow-hidden bg-shop-bg">
+      {/* Big background wordmark — sized to actually fit "OLAWOOD" (7 characters)
+          instead of the previous 22vw, which severely overflowed the screen on
+          every device. Shares the exact same centered anchor as the product
+          image below so they're guaranteed to overlap, not independently
+          positioned and hoping they line up. */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden pointer-events-none select-none">
+        <span
+          className="font-display font-semibold text-shop-text/90 leading-none whitespace-nowrap"
+          style={{ fontSize: "clamp(2.5rem, 13vw, 7.5rem)" }}
+        >
           {slide.wordmark || "OLAWOOD"}
         </span>
       </div>
 
-      {/* Product photo in front of the wordmark */}
+      {/* Product photo — same centered anchor, higher z-index so it visually
+          breaks through the wordmark in front of it */}
       {slide.image && (
-        <div key={slide.image} className="absolute inset-0 flex items-center justify-center animate-[heroFade_0.8s_ease-out]">
+        <div key={slide.image} className="absolute inset-0 z-10 flex items-center justify-center animate-[heroFade_0.8s_ease-out]">
           <div className="relative w-[88%] md:w-[58%] aspect-square">
             <Image src={slide.image} alt={slide.title || "Featured product"} fill className="object-contain drop-shadow-2xl" priority />
           </div>
@@ -46,7 +54,7 @@ export default function ShopHero({ slides = [] }) {
 
       {/* Promo banner, bottom-left */}
       {(slide.promo_text || slide.cta_label) && (
-        <div className="absolute left-4 bottom-8 bg-shop-surface/95 backdrop-blur px-6 py-5 max-w-xs shadow-lg rounded-2xl">
+        <div className="absolute z-20 left-4 bottom-6 bg-shop-surface/95 backdrop-blur px-5 py-4 max-w-xs shadow-lg rounded-2xl">
           {slide.promo_text && <p className="text-shop-text text-sm mb-3">{slide.promo_text}</p>}
           {slide.cta_label && slide.cta_href && (
             <Link href={slide.cta_href} className="label bg-shop-text text-shop-bg px-5 py-2.5 inline-block rounded-full">
@@ -58,7 +66,7 @@ export default function ShopHero({ slides = [] }) {
 
       {/* Slide indicators */}
       {slides.length > 1 && (
-        <div className="absolute bottom-6 right-4 flex gap-2">
+        <div className="absolute z-20 bottom-6 right-4 flex gap-2">
           {slides.map((_, i) => (
             <button
               key={i}

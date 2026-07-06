@@ -1,6 +1,6 @@
 export default function ProductLoading() {
   return (
-    <main className="flex-1 pt-28 pb-24 px-6 md:px-14 animate-pulse">
+    <main className="flex-1 pt-6 pb-24 px-6 md:px-14 animate-pulse">
       <div className="h-3 w-24 bg-line/60 mb-8" />
       <div className="grid md:grid-cols-2 gap-12 mt-8">
         <div>

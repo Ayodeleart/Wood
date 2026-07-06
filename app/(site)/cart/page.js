@@ -45,11 +45,11 @@ export default function CartPage() {
   }
 
   if (cart === null) {
-    return <ShopShell className="pt-24 px-4" />;
+    return <ShopShell className="pt-6 px-4" />;
   }
 
   return (
-    <ShopShell className="pt-24 px-4">
+    <ShopShell className="pt-6 px-4">
       <h1 className="font-display text-3xl text-shop-text mb-8">Cart</h1>
 
       {cart.length === 0 ? (

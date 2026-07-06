@@ -15,6 +15,7 @@ import {
   FileText,
   ChevronRight,
   Pencil,
+  Settings,
 } from "lucide-react";
 
 export const revalidate = 0;
@@ -32,6 +33,7 @@ export default async function AccountPage() {
     { href: "/account/address", icon: MapPin, label: "Address Book", sub: "Manage your delivery address" },
     { href: "/account/orders", icon: Receipt, label: "Order History", sub: "View your past orders" },
     { href: "/account/notifications", icon: Bell, label: "Notifications", sub: "Order and promo preferences" },
+    { href: "/account/settings", icon: Settings, label: "Settings", sub: "Dark mode and app preferences" },
   ];
 
   const SUPPORT_ROWS = [
@@ -42,7 +44,7 @@ export default async function AccountPage() {
   ];
 
   return (
-    <ShopShell className="pt-24 pb-16 px-4">
+    <ShopShell className="pt-6 pb-16 px-4">
       <h1 className="font-display text-2xl text-shop-text mb-6">Profile</h1>
 
       <div className="flex items-center justify-between bg-shop-surface rounded-2xl p-4 mb-6">

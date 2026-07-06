@@ -10,7 +10,8 @@ import MobileCTABar from "@/components/MobileCTABar";
 import ShopHero from "@/components/ecommerce/ShopHero";
 import CategoryStickyNav from "@/components/ecommerce/CategoryStickyNav";
 import ShopProductGrid from "@/components/ecommerce/ShopProductGrid";
-import ShopBottomNav from "@/components/ecommerce/ShopBottomNav";
+import CategoryIconRow from "@/components/ecommerce/CategoryIconRow";
+import ShopShell from "@/components/ecommerce/ShopShell";
 import HomeGate from "@/components/HomeGate";
 import { getHomeData } from "@/lib/getHomeData";
 import { supabaseServer } from "@/lib/supabaseServer";
@@ -68,8 +69,9 @@ export default async function Home({ searchParams }) {
   );
 
   const ecommerce = (
-    <main className="flex-1 shop-light min-h-screen pb-24 md:pb-0">
+    <ShopShell>
       <ShopHero slides={shopSlides} />
+      <CategoryIconRow categories={categories} />
       {categories.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-40 px-6 text-center">
           <span className="label text-shop-mute mb-3">Collection Coming</span>
@@ -84,8 +86,7 @@ export default async function Home({ searchParams }) {
         </>
       )}
       <FeaturedProducts products={featuredProducts} dark />
-      <ShopBottomNav />
-    </main>
+    </ShopShell>
   );
 
   return <HomeGate loggedIn={!!user} forcePreview={forcePreview} landing={landing} ecommerce={ecommerce} />;
