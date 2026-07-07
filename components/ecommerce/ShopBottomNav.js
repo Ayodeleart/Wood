@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Heart, ShoppingBag, User } from "lucide-react";
 import { getCart } from "@/lib/cart";
+import NavHomeIcon from "@/components/ecommerce/icons/NavHomeIcon";
+import NavCartIcon from "@/components/ecommerce/icons/NavCartIcon";
+import NavHeartIcon from "@/components/ecommerce/icons/NavHeartIcon";
+import NavProfileIcon from "@/components/ecommerce/icons/NavProfileIcon";
 
 export default function ShopBottomNav() {
   const pathname = usePathname();
@@ -18,10 +21,10 @@ export default function ShopBottomNav() {
   }, []);
 
   const TABS = [
-    { href: "/", icon: Home, label: "Home" },
-    { href: "/cart", icon: ShoppingBag, label: "Cart", badge: cartCount },
-    { href: "/account/saved", icon: Heart, label: "Saved" },
-    { href: "/account", icon: User, label: "Account" },
+    { href: "/", Icon: NavHomeIcon, label: "Home" },
+    { href: "/cart", Icon: NavCartIcon, label: "Cart", badge: cartCount },
+    { href: "/account/saved", Icon: NavHeartIcon, label: "Saved" },
+    { href: "/account", Icon: NavProfileIcon, label: "Account" },
   ];
 
   return (
@@ -29,6 +32,7 @@ export default function ShopBottomNav() {
       <div className="flex items-stretch justify-between bg-white/60 backdrop-blur-2xl border border-white/40 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.12)] px-2 py-2">
         {TABS.map((tab) => {
           const active = pathname === tab.href;
+          const isHeart = tab.label === "Saved";
           return (
             <Link
               key={tab.href}
@@ -40,7 +44,7 @@ export default function ShopBottomNav() {
                   active ? "bg-black text-white" : "text-black/50"
                 }`}
               >
-                <tab.icon size={19} strokeWidth={active ? 2.2 : 1.7} />
+                {isHeart ? <tab.Icon size={19} filled={active} /> : <tab.Icon size={19} />}
               </span>
               {!!tab.badge && (
                 <span className="absolute top-0 right-[calc(50%-20px)] w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center font-medium">

@@ -36,7 +36,7 @@ export default async function ProductPage({ params }) {
     .map((i) => i.url);
 
   return (
-    <ShopShell className="pb-28 md:pb-16 pt-6">
+    <ShopShell hideNav className="pb-28 md:pb-16 pt-6">
       <div className="px-4 md:px-14">
         <Link href={`/collections/${product.categories?.slug}`} className="label text-shop-mute hover:text-shop-text transition-colors">
           ← {product.categories?.name}
@@ -80,9 +80,9 @@ export default async function ProductPage({ params }) {
         </div>
       </div>
 
-      {/* Sticky mobile price + add-to-cart bar — sits above the bottom nav (bottom-16), not on top of it */}
+      {/* Sticky mobile price + add-to-cart bar — bottom nav is hidden on this page, so this owns the bottom */}
       {product.price && (
-        <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 bg-shop-bg border-t border-shop-line px-4 py-3 flex items-center justify-between gap-4">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-shop-bg border-t border-shop-line px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] flex items-center justify-between gap-4">
           <span className="text-shop-text text-lg font-medium shrink-0">₦{Number(product.price).toLocaleString()}</span>
           <div className="flex-1 max-w-[220px]">
             <AddToCartButton product={product} image={images[0]} fullWidth />

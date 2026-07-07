@@ -1,23 +1,30 @@
 "use client";
 
 import Link from "next/link";
-import { Table2, ChefHat, Lamp, Archive, Flower2, MoreHorizontal, BedDouble, Tv } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import SofaIcon from "@/components/ecommerce/icons/SofaIcon";
+import ChairIcon from "@/components/ecommerce/icons/ChairIcon";
+import KitchenIcon from "@/components/ecommerce/icons/KitchenIcon";
+import WardrobeIcon from "@/components/ecommerce/icons/WardrobeIcon";
+import VaseIcon from "@/components/ecommerce/icons/VaseIcon";
+import LampIcon from "@/components/ecommerce/icons/LampIcon";
+import CurtainIcon from "@/components/ecommerce/icons/CurtainIcon";
 
-// Only "Sofa" uses your exact provided SVG right now. The rest are lucide-react
-// placeholders picked to loosely match, not from the same icon set, so they
-// won't be pixel-consistent with the Sofa icon's style. Swap the entries below
-// with real SVGs from the same source for full visual consistency.
-const CATEGORY_ICON_MAP = {
-  sofas: SofaIcon,
-  "bed-frames": BedDouble,
-  "tv-consoles": Tv,
-  kitchen: ChefHat,
-  tables: Table2,
-  lamps: Lamp,
-  cupboards: Archive,
-  vases: Flower2,
-};
+const KEYWORD_ICONS = [
+  { keywords: ["sofa", "couch", "seating"], Icon: SofaIcon },
+  { keywords: ["chair"], Icon: ChairIcon },
+  { keywords: ["kitchen", "cabinet"], Icon: KitchenIcon },
+  { keywords: ["wardrobe", "closet"], Icon: WardrobeIcon },
+  { keywords: ["vase"], Icon: VaseIcon },
+  { keywords: ["lamp", "light"], Icon: LampIcon },
+  { keywords: ["curtain"], Icon: CurtainIcon },
+];
+
+function iconFor(category) {
+  const haystack = (category.slug + " " + category.name).toLowerCase();
+  const match = KEYWORD_ICONS.find((k) => k.keywords.some((kw) => haystack.includes(kw)));
+  return match ? match.Icon : MoreHorizontal;
+}
 
 export default function CategoryIconRow({ categories = [] }) {
   if (!categories.length) return null;
@@ -28,11 +35,11 @@ export default function CategoryIconRow({ categories = [] }) {
     <div className="px-4 py-6">
       <div className="grid grid-cols-4 gap-y-5 gap-x-2">
         {items.map((cat) => {
-          const Icon = CATEGORY_ICON_MAP[cat.slug] || MoreHorizontal;
+          const Icon = iconFor(cat);
           return (
             <Link key={cat.slug} href={"/collections/" + cat.slug} className="flex flex-col items-center gap-2 active:scale-95 transition-transform">
               <div className="w-14 h-14 rounded-full bg-shop-surface flex items-center justify-center text-shop-text">
-                <Icon size={22} strokeWidth={1.6} />
+                <Icon size={22} />
               </div>
               <span className="text-shop-mute text-xs text-center truncate w-full">{cat.name}</span>
             </Link>
