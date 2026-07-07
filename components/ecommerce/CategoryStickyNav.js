@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 export default function CategoryStickyNav({ categories = [] }) {
   const [active, setActive] = useState(categories[0]?.slug ?? null);
   const barRef = useRef(null);
+  const pillRefs = useRef({});
 
   useEffect(() => {
     if (!barRef.current) return;
@@ -49,6 +50,15 @@ export default function CategoryStickyNav({ categories = [] }) {
     return () => observer.disconnect();
   }, [categories]);
 
+  // Keep the active pill visible in the horizontal strip as the user scrolls
+  // the page — without this, on a long category list the highlighted pill
+  // can end up scrolled off-screen while browsing further down.
+  useEffect(() => {
+    if (!active) return;
+    const el = pillRefs.current[active];
+    if (el) el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [active]);
+
   if (categories.length === 0) return null;
 
   function goTo(slug) {
@@ -72,6 +82,7 @@ export default function CategoryStickyNav({ categories = [] }) {
         {categories.map((c) => (
           <button
             key={c.slug}
+            ref={(el) => { pillRefs.current[c.slug] = el; }}
             onClick={() => goTo(c.slug)}
             className={`label whitespace-nowrap px-4 py-2 rounded-full border transition-colors duration-300 shrink-0 ${
               active === c.slug

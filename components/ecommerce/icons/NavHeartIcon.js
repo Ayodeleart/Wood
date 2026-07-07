@@ -1,7 +1,17 @@
+// Outlined to match the thin-line style of Home/Cart/Profile — the original
+// heart you sent was a solid-fill shape, a different visual weight from the
+// rest of the set. This uses the same stroke width/rounded caps as the others.
 export default function NavHeartIcon({ size = 24, filled = false }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
-      <path d="M12,23.2l-0.6-0.5C8.7,20.7,0,13.5,0,7.3C0,3.8,2.9,1,6.5,1c2.2,0,4.3,1.1,5.5,2.9l0,0l0,0 C13.2,2.1,15.3,1,17.5,1 C21.1,1,24,3.8,24,7.3c0,6.3-8.7,13.4-11.4,15.5L12,23.2z M6.5,2.9C4,2.9,2,4.8,2,7.2c0,4.1,5.1,9.5,10,13.4 c4.9-3.9,10-9.3,10-13.4c0-2.4-2-4.3-4.5-4.3c-1.6,0-3,0.8-3.8,2L12,7.6L10.3,5C9.5,3.7,8.1,2.9,6.5,2.9z"/>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 20.25C12 20.25 3.75 15.5 3.75 9.75C3.75 6.85051 6.10051 4.5 9 4.5C10.3062 4.5 11.5 5 12 6C12.5 5 13.6938 4.5 15 4.5C17.8995 4.5 20.25 6.85051 20.25 9.75C20.25 15.5 12 20.25 12 20.25Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill={filled ? "currentColor" : "none"}
+      />
     </svg>
   );
 }

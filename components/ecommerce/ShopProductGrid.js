@@ -47,6 +47,7 @@ function ProductCard({ product, night, index }) {
             src={displayImage}
             alt={product.name}
             fill
+            sizes="(max-width: 768px) 50vw, 25vw"
             className={`${imageFitClass(displayImage)} transition-transform duration-500 group-hover:scale-[1.05] p-4`}
           />
         )}

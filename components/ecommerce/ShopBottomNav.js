@@ -28,8 +28,8 @@ export default function ShopBottomNav() {
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-5 left-4 right-4 z-40">
-      <div className="flex items-stretch justify-between bg-white/60 backdrop-blur-2xl border border-white/40 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.12)] px-2 py-2">
+    <nav className="md:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-40 w-fit">
+      <div className="flex items-stretch gap-1 bg-white/60 backdrop-blur-2xl border border-white/40 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.12)] px-1.5 py-1.5">
         {TABS.map((tab) => {
           const active = pathname === tab.href;
           const isHeart = tab.label === "Saved";
@@ -37,17 +37,17 @@ export default function ShopBottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
-              className="relative flex-1 flex items-center justify-center py-2.5 active:scale-90 transition-transform"
+              className="relative flex items-center justify-center px-3 py-2 active:scale-90 transition-transform"
             >
               <span
-                className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
+                className={`flex items-center justify-center w-9 h-9 rounded-full transition-colors ${
                   active ? "bg-black text-white" : "text-black/50"
                 }`}
               >
-                {isHeart ? <tab.Icon size={19} filled={active} /> : <tab.Icon size={19} />}
+                {isHeart ? <tab.Icon size={18} filled={active} /> : <tab.Icon size={18} />}
               </span>
               {!!tab.badge && (
-                <span className="absolute top-0 right-[calc(50%-20px)] w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center font-medium">
+                <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center font-medium">
                   {tab.badge}
                 </span>
               )}
