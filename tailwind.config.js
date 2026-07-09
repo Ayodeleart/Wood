@@ -20,6 +20,7 @@ export default {
         "shop-text": "var(--shop-text)",
         "shop-mute": "var(--shop-mute)",
         "shop-tile": "var(--shop-tile)",
+        "shop-accent": "var(--shop-accent)",
       },
       fontFamily: {
         display: ["var(--font-display)"],

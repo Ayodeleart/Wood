@@ -33,7 +33,7 @@ export default function ShopHero({ slides = [] }) {
           every device. Shares the exact same centered anchor as the product
           image below so they're guaranteed to overlap, not independently
           positioned and hoping they line up. */}
-      <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden pointer-events-none select-none">
+      <div className="absolute inset-0 z-0 flex items-center justify-center pb-[6%] overflow-hidden pointer-events-none select-none">
         <span
           className="font-display font-semibold text-shop-text/90 leading-none whitespace-nowrap"
           style={{ fontSize: "clamp(2.5rem, 13vw, 7.5rem)" }}

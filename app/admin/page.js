@@ -84,6 +84,7 @@ export default function AdminDashboard() {
       const fd = new FormData();
       fd.append("file", file);
       fd.append("removeBg", effectiveRemoveBg ? "true" : "false");
+      if (effectiveRemoveBg) fd.append("transparentOutput", "true");
       try {
         const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
         const data = await res.json();

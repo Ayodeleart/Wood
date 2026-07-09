@@ -18,7 +18,7 @@ import { supabaseServer } from "@/lib/supabaseServer";
 import { supabasePublic } from "@/lib/supabasePublic";
 import Link from "next/link";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function Home({ searchParams }) {
   const { categories, featuredProducts } = await getHomeData();

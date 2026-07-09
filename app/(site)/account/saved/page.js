@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart } from "lucide-react";
 import ShopShell from "@/components/ecommerce/ShopShell";
+import NavHeartIcon from "@/components/ecommerce/icons/NavHeartIcon";
 
 export default function SavedPage() {
   const [items, setItems] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -19,7 +20,11 @@ export default function SavedPage() {
         }
         return r.json();
       })
-      .then((d) => d && setItems(d.saved || []))
+      .then((d) => {
+        if (!d) return;
+        setItems(d.saved || []);
+        setRecommendations(d.recommendations || []);
+      })
       .catch(() => setError("Couldn't load your saved items."));
   }, []);
 
@@ -33,22 +38,21 @@ export default function SavedPage() {
   }
 
   return (
-    <ShopShell className="pt-6 px-4">
+    <ShopShell className="pt-6 pb-16 px-4">
       <h1 className="font-display text-3xl text-shop-text mb-8">Saved</h1>
 
       {error && <p className="text-red-400 text-sm">{error}</p>}
-
       {items === null && !error && <p className="text-shop-mute text-sm">Loading…</p>}
 
       {items?.length === 0 && (
-        <div className="flex flex-col items-center text-center py-24">
-          <Heart size={32} className="text-shop-mute mb-4" strokeWidth={1.4} />
-          <p className="text-shop-mute">Nothing saved yet — tap the heart on any product to keep it here.</p>
+        <div className="flex flex-col items-center text-center py-16">
+          <NavHeartIcon size={28} />
+          <p className="text-shop-mute mt-4">Nothing saved yet — tap the heart on any product to keep it here.</p>
         </div>
       )}
 
       {items?.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
           {items.map(({ product_id, products: p }) => {
             if (!p) return null;
             const img = p.product_images?.sort((a, b) => a.sort_order - b.sort_order)?.[0]?.url;
@@ -67,6 +71,28 @@ export default function SavedPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {recommendations.length > 0 && (
+        <div>
+          <h2 className="text-shop-text text-lg font-medium mb-4">
+            {items?.length > 0 ? "You Might Also Like" : "Recommended For You"}
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {recommendations.map((p) => {
+              const img = p.product_images?.sort((a, b) => a.sort_order - b.sort_order)?.[0]?.url;
+              return (
+                <Link key={p.id} href={`/products/${p.slug}`} className="flex flex-col active:scale-[0.97] transition-transform">
+                  <div className="relative aspect-square bg-shop-tile rounded-2xl overflow-hidden">
+                    {img && <Image src={img} alt={p.name} fill className="object-contain p-4" />}
+                  </div>
+                  <h3 className="text-shop-text text-sm truncate mt-2">{p.name}</h3>
+                  {p.price && <p className="text-shop-mute text-sm">₦{Number(p.price).toLocaleString()}</p>}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       )}
     </ShopShell>

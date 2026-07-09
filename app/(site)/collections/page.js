@@ -3,7 +3,7 @@ import Image from "next/image";
 import { supabasePublic } from "@/lib/supabasePublic";
 import ShopShell from "@/components/ecommerce/ShopShell";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function CategoriesPage() {
   const { data: categories } = await supabasePublic

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { supabasePublic } from "@/lib/supabasePublic";
 import CollectionGrid from "@/components/CollectionGrid";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function CollectionPage({ params }) {
   const { slug } = await params;

@@ -11,7 +11,7 @@ import FavoriteButton from "@/components/ecommerce/FavoriteButton";
 import ShopShell from "@/components/ecommerce/ShopShell";
 import { Star } from "lucide-react";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function ProductPage({ params }) {
   const { slug } = await params;

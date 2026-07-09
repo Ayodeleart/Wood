@@ -2,7 +2,7 @@ import Nav from "@/components/Nav";
 import { getNavCategories } from "@/lib/getNavCategories";
 import { ThemeProvider } from "@/lib/ThemeContext";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function SiteLayout({ children }) {
   const categories = await getNavCategories();

@@ -13,7 +13,19 @@ export async function GET() {
     .order("created_at", { ascending: false });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ saved: data || [] });
+
+  // Recommendations so the page is never a dead end when nothing's saved yet —
+  // just the most-viewed products, excluding anything already saved.
+  const savedIds = (data || []).map((s) => s.product_id);
+  let recQuery = sb
+    .from("products")
+    .select("id, slug, name, price, product_images(url, sort_order)")
+    .order("view_count", { ascending: false })
+    .limit(8);
+  if (savedIds.length) recQuery = recQuery.not("id", "in", `(${savedIds.join(",")})`);
+  const { data: recommendations } = await recQuery;
+
+  return NextResponse.json({ saved: data || [], recommendations: recommendations || [] });
 }
 
 export async function POST(req) {

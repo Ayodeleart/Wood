@@ -3,6 +3,7 @@ import RegisterSW from "@/components/RegisterSW";
 import IntroSplash from "@/components/ecommerce/IntroSplash";
 import { ShopThemeProvider } from "@/lib/ShopThemeContext";
 import { supabasePublic } from "@/lib/supabasePublic";
+import { cookies } from "next/headers";
 
 export const metadata = {
   title: "Ola Wood — Furniture · Interior · Living",
@@ -23,6 +24,9 @@ export const viewport = {
 };
 
 export default async function RootLayout({ children }) {
+  const cookieStore = await cookies();
+  const initialTheme = cookieStore.get("shopTheme")?.value === "dark" ? "dark" : "light";
+
   const { data: introSlides } = await supabasePublic
     .from("shop_hero_slides")
     .select("*")
@@ -32,7 +36,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-paper text-ink">
-        <ShopThemeProvider>
+        <ShopThemeProvider initialTheme={initialTheme}>
           {children}
           <IntroSplash slides={introSlides || []} />
         </ShopThemeProvider>

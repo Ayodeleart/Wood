@@ -3,11 +3,16 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, Minus, Plus, X } from "lucide-react";
-import { getCart, removeFromCart, setQuantity } from "@/lib/cart";
+import { useRouter } from "next/navigation";
+import { Minus, Plus, X } from "lucide-react";
+import { getCart, removeFromCart, setQuantity, clearCart } from "@/lib/cart";
+import { supabaseBrowser } from "@/lib/supabaseBrowser";
+import { openPaystackPopup } from "@/lib/paystack";
 import ShopShell from "@/components/ecommerce/ShopShell";
+import NavCartIcon from "@/components/ecommerce/icons/NavCartIcon";
 
 export default function CartPage() {
+  const router = useRouter();
   const [cart, setCart] = useState(null);
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [loading, setLoading] = useState(false);
@@ -18,6 +23,18 @@ export default function CartPage() {
     const onUpdate = () => setCart(getCart());
     window.addEventListener("cart-updated", onUpdate);
     return () => window.removeEventListener("cart-updated", onUpdate);
+  }, []);
+
+  useEffect(() => {
+    const sb = supabaseBrowser();
+    sb.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      setForm((f) => ({
+        name: f.name || user.user_metadata?.full_name || "",
+        email: f.email || user.email || "",
+        phone: f.phone || user.user_metadata?.phone || "",
+      }));
+    });
   }, []);
 
   const total = cart?.reduce((sum, i) => sum + i.price * i.quantity, 0) || 0;
@@ -37,7 +54,22 @@ export default function CartPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not start payment.");
-      window.location.href = data.authorization_url;
+
+      openPaystackPopup({
+        email: form.email,
+        amount: data.amount,
+        reference: data.reference,
+        onSuccess: async (reference) => {
+          await fetch("/api/checkout/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reference }),
+          });
+          clearCart();
+          router.push(`/checkout/success?reference=${reference}`);
+        },
+        onClose: () => setLoading(false),
+      });
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -54,8 +86,8 @@ export default function CartPage() {
 
       {cart.length === 0 ? (
         <div className="flex flex-col items-center text-center py-24">
-          <ShoppingBag size={32} className="text-shop-mute mb-4" strokeWidth={1.4} />
-          <p className="text-shop-mute mb-6">Your cart is empty.</p>
+          <NavCartIcon size={32} />
+          <p className="text-shop-mute mb-6 mt-4">Your cart is empty.</p>
           <Link href="/#collections" className="label border border-shop-text px-6 py-3 rounded-full text-shop-text">
             Browse Collections
           </Link>
@@ -127,7 +159,7 @@ export default function CartPage() {
               disabled={loading}
               className="label bg-shop-text text-shop-bg py-4 rounded-full mt-2 disabled:opacity-50"
             >
-              {loading ? "Redirecting…" : `Checkout · ₦${total.toLocaleString()}`}
+              {loading ? "Opening payment…" : `Checkout · ₦${total.toLocaleString()}`}
             </button>
           </form>
         </>

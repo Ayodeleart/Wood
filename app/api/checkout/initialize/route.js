@@ -62,34 +62,13 @@ export async function POST(req) {
 
   const origin = req.headers.get("origin") || new URL(req.url).origin;
 
-  const paystackRes = await fetch("https://api.paystack.co/transaction/initialize", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${secretKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      amount: Math.round(total * 100), // kobo
-      reference,
-      callback_url: `${origin}/checkout/success?reference=${reference}`,
-      metadata: {
-        product_ids: orderRows.map((r) => r.product_id),
-        customer_name: name,
-        customer_phone: phone || "",
-      },
-    }),
+  // Inline Paystack popup (client-side, using the public key) instead of the
+  // redirect flow — the redirect was navigating to Paystack's own domain,
+  // which on some PWA setups hands off to the system browser entirely
+  // instead of staying inside the installed app. The popup stays in-app.
+  return NextResponse.json({
+    reference,
+    amount: Math.round(total * 100), // kobo
+    email,
   });
-
-  const paystackData = await paystackRes.json();
-
-  if (!paystackRes.ok || !paystackData.status) {
-    await sb.from("orders").update({ status: "failed" }).eq("reference", reference);
-    return NextResponse.json(
-      { error: paystackData.message || "Could not start payment. Please try again." },
-      { status: 502 }
-    );
-  }
-
-  return NextResponse.json({ authorization_url: paystackData.data.authorization_url });
 }
