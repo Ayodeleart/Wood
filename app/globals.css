@@ -137,7 +137,7 @@ textarea {
   --shop-line: #1e4a3f;
   --shop-text: #ffffff;
   --shop-mute: #8fb3a8;
-  --shop-tile: #f2f1ee;
+  --shop-tile: var(--shop-surface);
   --shop-accent: #4fd1a5;
   background-color: var(--shop-bg);
   color: var(--shop-text);

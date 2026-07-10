@@ -9,12 +9,13 @@ import { useTheme } from "@/lib/ThemeContext";
 import FavoriteButton from "@/components/ecommerce/FavoriteButton";
 import { Star } from "lucide-react";
 
-function ProductCard({ product, night, index }) {
+function ProductCard({ product, night, index, priority }) {
   const ref = useRef(null);
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useState(!!priority);
   const displayImage = getProductDisplayImage(product, night);
 
   useEffect(() => {
+    if (priority) return; // already shown immediately, no need to observe
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -28,7 +29,7 @@ function ProductCard({ product, night, index }) {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [priority]);
 
   return (
     <Link
@@ -47,6 +48,7 @@ function ProductCard({ product, night, index }) {
             src={displayImage}
             alt={product.name}
             fill
+            priority={priority}
             sizes="(max-width: 768px) 50vw, 25vw"
             className={`${imageFitClass(displayImage)} transition-transform duration-500 group-hover:scale-[1.05] p-4`}
           />
@@ -71,7 +73,7 @@ function ProductCard({ product, night, index }) {
   );
 }
 
-export default function ShopProductGrid({ category, products }) {
+export default function ShopProductGrid({ category, products, priority = false }) {
   const { night } = useTheme();
   if (!products?.length) return null;
 
@@ -85,7 +87,7 @@ export default function ShopProductGrid({ category, products }) {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {products.slice(0, 8).map((p, i) => (
-          <ProductCard key={p.id} product={p} night={night} index={i} />
+          <ProductCard key={p.id} product={p} night={night} index={i} priority={priority && i < 4} />
         ))}
       </div>
     </section>

@@ -21,7 +21,7 @@ import Link from "next/link";
 export const revalidate = 60;
 
 export default async function Home({ searchParams }) {
-  const { categories, featuredProducts } = await getHomeData();
+  const { categories, allCategories, featuredProducts } = await getHomeData();
   const params = await searchParams;
   const forcePreview = params?.preview === "shop";
 
@@ -71,7 +71,7 @@ export default async function Home({ searchParams }) {
   const ecommerce = (
     <ShopShell>
       <ShopHero slides={shopSlides} />
-      <CategoryIconRow categories={categories} />
+      <CategoryIconRow categories={allCategories} />
       {categories.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-40 px-6 text-center">
           <span className="label text-shop-mute mb-3">Collection Coming</span>
@@ -80,8 +80,8 @@ export default async function Home({ searchParams }) {
       ) : (
         <>
           <CategoryStickyNav categories={categories} />
-          {categories.map((cat) => (
-            <ShopProductGrid key={cat.slug} category={cat} products={cat.products} />
+          {categories.map((cat, i) => (
+            <ShopProductGrid key={cat.slug} category={cat} products={cat.products} priority={i === 0} />
           ))}
         </>
       )}
