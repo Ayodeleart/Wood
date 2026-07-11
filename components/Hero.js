@@ -2,16 +2,20 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useDeviceType } from "@/lib/useDeviceType";
 
 // Desktop and mobile are fully independent rotations — a slide only enters
 // the desktop carousel if it has a desktop image, only enters the mobile
 // carousel if it has a mobile image. No fallback between them.
 //
-// Which one shows is decided by actual device type (mouse+hover vs touch),
-// not raw viewport width — a phone rotated to landscape can easily exceed
-// 768px wide but is still a phone, and showing it a desktop-shaped photo
-// forced into a short landscape strip is what caused the "zoomed in" crop.
+// The desktop/mobile split uses a plain viewport-width breakpoint at 1024px
+// (not the usual 768px). This is deliberate: even the largest phones in
+// landscape max out around 900-930px wide, so 1024px is comfortably above
+// any phone in any orientation, while real laptops/desktops start at 1024px+.
+// This avoids two failure modes we hit before: 768px was low enough that a
+// landscape phone crossed it and got served a desktop-shaped photo cropped
+// into a short strip ("zoomed in"); and a pointer/hover-based JS check was
+// unreliable across different browsers/devices and misclassified real
+// desktops as mobile. A plain width check at 1024px has neither problem.
 function ViewportCarousel({ slides, field }) {
   const eligible = slides.filter((s) => s[field]);
   const [index, setIndex] = useState(0);
@@ -41,27 +45,27 @@ function ViewportCarousel({ slides, field }) {
 }
 
 export default function Hero({ slides = [] }) {
-  const isDesktop = useDeviceType();
   const hasAny = slides.some((s) => s.image || s.image_mobile);
 
   if (!hasAny) {
     return (
-      <section className="relative w-full h-[68vh] md:h-[88vh] overflow-hidden bg-smoke flex items-center justify-center">
+      <section className="relative w-full h-[68vh] lg:h-[88vh] overflow-hidden bg-smoke flex items-center justify-center">
         <p className="text-mute text-sm">Upload a landing hero image in Admin → Hero Slides.</p>
       </section>
     );
   }
 
   return (
-    <section className="relative w-full h-[68vh] md:h-[88vh] overflow-hidden bg-smoke">
-      {/* isDesktop is null on first paint (before the browser confirms pointer
-          type) — render nothing rather than guessing, to avoid a flash of the
-          wrong carousel. It resolves within a frame or two. */}
-      {isDesktop === true && <ViewportCarousel slides={slides} field="image" />}
-      {isDesktop === false && <ViewportCarousel slides={slides} field="image_mobile" />}
+    <section className="relative w-full h-[68vh] lg:h-[88vh] overflow-hidden bg-smoke">
+      <div className="absolute inset-0 hidden lg:block">
+        <ViewportCarousel slides={slides} field="image" />
+      </div>
+      <div className="absolute inset-0 lg:hidden">
+        <ViewportCarousel slides={slides} field="image_mobile" />
+      </div>
 
-      <div className="absolute z-20 bottom-0 left-0 right-0 flex items-end justify-between gap-6 px-6 md:px-14 pb-8 md:pb-10">
-        <p className="text-ink text-sm md:text-base leading-snug max-w-xs drop-shadow-sm">
+      <div className="absolute z-20 bottom-0 left-0 right-0 flex items-end justify-between gap-6 px-6 lg:px-14 pb-8 lg:pb-10">
+        <p className="text-ink text-sm lg:text-base leading-snug max-w-xs drop-shadow-sm">
           Furniture designed around how you actually live.
         </p>
         <a
