@@ -76,7 +76,8 @@ export default function HeroSlidesAdmin() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
-        image: form.image || form.image_mobile, // keep the required column filled if only mobile was uploaded
+        // Send exactly what was uploaded for each field — no fallback between
+        // desktop and mobile. A slide can be desktop-only, mobile-only, or both.
         sort_order: slides.length,
       }),
     });
