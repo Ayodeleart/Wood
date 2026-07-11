@@ -2,13 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useDeviceType } from "@/lib/useDeviceType";
 
 // Desktop and mobile are fully independent rotations — a slide only enters
 // the desktop carousel if it has a desktop image, only enters the mobile
-// carousel if it has a mobile image. No fallback between them: that's what
-// caused a desktop-only slide's image to bleed into the mobile rotation
-// (and vice versa) when they were uploaded as separate slide entries.
-function ViewportCarousel({ slides, field, className }) {
+// carousel if it has a mobile image. No fallback between them.
+//
+// Which one shows is decided by actual device type (mouse+hover vs touch),
+// not raw viewport width — a phone rotated to landscape can easily exceed
+// 768px wide but is still a phone, and showing it a desktop-shaped photo
+// forced into a short landscape strip is what caused the "zoomed in" crop.
+function ViewportCarousel({ slides, field }) {
   const eligible = slides.filter((s) => s[field]);
   const [index, setIndex] = useState(0);
 
@@ -21,7 +25,7 @@ function ViewportCarousel({ slides, field, className }) {
   if (eligible.length === 0) return null;
 
   return (
-    <div className={className}>
+    <div className="absolute inset-0">
       {eligible.map((slide, i) => (
         <div
           key={slide.id}
@@ -37,6 +41,7 @@ function ViewportCarousel({ slides, field, className }) {
 }
 
 export default function Hero({ slides = [] }) {
+  const isDesktop = useDeviceType();
   const hasAny = slides.some((s) => s.image || s.image_mobile);
 
   if (!hasAny) {
@@ -48,9 +53,12 @@ export default function Hero({ slides = [] }) {
   }
 
   return (
-    <section className="relative w-full h-[68vh] md:h-[88vh] overflow-hidden">
-      <ViewportCarousel slides={slides} field="image" className="absolute inset-0 hidden md:block" />
-      <ViewportCarousel slides={slides} field="image_mobile" className="absolute inset-0 md:hidden" />
+    <section className="relative w-full h-[68vh] md:h-[88vh] overflow-hidden bg-smoke">
+      {/* isDesktop is null on first paint (before the browser confirms pointer
+          type) — render nothing rather than guessing, to avoid a flash of the
+          wrong carousel. It resolves within a frame or two. */}
+      {isDesktop === true && <ViewportCarousel slides={slides} field="image" />}
+      {isDesktop === false && <ViewportCarousel slides={slides} field="image_mobile" />}
 
       <div className="absolute z-20 bottom-0 left-0 right-0 flex items-end justify-between gap-6 px-6 md:px-14 pb-8 md:pb-10">
         <p className="text-ink text-sm md:text-base leading-snug max-w-xs drop-shadow-sm">

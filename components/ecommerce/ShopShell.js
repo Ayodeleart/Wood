@@ -9,7 +9,7 @@ export default function ShopShell({ children, className = "", hideNav = false })
   const { theme } = useShopTheme();
 
   return (
-    <div className={theme === "dark" ? "shop-dark min-h-screen" : "shop-light min-h-screen"}>
+    <div className={theme === "dark" ? "shop-dark min-h-[100dvh]" : "shop-light min-h-[100dvh]"}>
       <div className={`${hideNav ? "" : "pb-24 md:pb-0"} ${className}`}>{children}</div>
       {!hideNav && <ShopBottomNav />}
     </div>
