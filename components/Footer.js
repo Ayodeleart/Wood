@@ -56,7 +56,10 @@ export default function Footer({ categories = [] }) {
         <span>© {year} Ola Wood — All Rights Reserved</span>
         <div className="flex items-center gap-6">
           <span>Ijebu-Ode, Ogun State</span>
-          <span className="text-mute/70">Built by octopusfur</span>
+          <span className="text-mute/70 flex items-center gap-1.5">
+            <Image src="/icons/octopusfur.svg" alt="" width={12} height={12} className="opacity-70" />
+            Built by octopusfur
+          </span>
         </div>
       </div>
       </div>
