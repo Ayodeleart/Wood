@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabaseBrowser";
+import { useGoogleSignIn } from "@/lib/useGoogleSignIn";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { signInWithGoogle, waiting } = useGoogleSignIn();
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -26,14 +28,6 @@ export default function LoginPage() {
     }
     router.push("/");
     router.refresh();
-  }
-
-  async function signInWithGoogle() {
-    const sb = supabaseBrowser();
-    await sb.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
   }
 
   return (
@@ -61,6 +55,12 @@ export default function LoginPage() {
           </svg>
           Continue with Google
         </button>
+
+        {waiting && (
+          <p className="text-sm text-mute text-center -mt-3 mb-6">
+            Finish signing in in the tab that just opened, then come back here.
+          </p>
+        )}
 
         <div className="flex items-center gap-3 mb-6">
           <div className="flex-1 h-px bg-line" />
