@@ -26,7 +26,7 @@ export default function LoginPage() {
       setError(error.message);
       return;
     }
-    router.push("/");
+    router.push("/?welcome=1");
     router.refresh();
   }
 

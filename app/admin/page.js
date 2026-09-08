@@ -238,6 +238,9 @@ export default function AdminDashboard() {
           <a href="/admin/hero-slides" className="label text-mute hover:text-ink transition-colors">
             Hero Slides
           </a>
+          <a href="/admin/announcements" className="label text-mute hover:text-ink transition-colors">
+            Announcements
+          </a>
           <button onClick={logout} className="label text-mute hover:text-ink transition-colors">
             Log Out
           </button>

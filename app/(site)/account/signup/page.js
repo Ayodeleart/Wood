@@ -34,7 +34,7 @@ export default function SignupPage() {
     }
 
     setLoading(false);
-    router.push("/");
+    router.push("/?welcome=1");
     router.refresh();
   }
 

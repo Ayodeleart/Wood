@@ -16,7 +16,6 @@ import HomeGate from "@/components/HomeGate";
 import { getHomeData } from "@/lib/getHomeData";
 import { supabasePublic } from "@/lib/supabasePublic";
 import { headers } from "next/headers";
-import Link from "next/link";
 
 export const revalidate = 60;
 
@@ -49,18 +48,16 @@ export default async function Home({ searchParams }) {
       <CategoryTiles categories={categories} />
       <NeedsGrid />
       <FeaturedProducts products={featuredProducts} />
-      {featuredProducts?.length > 0 && (
-        <div className="flex flex-col items-center text-center px-6 py-16 border-t border-line">
-          <span className="label text-mute mb-3">The Full Collection</span>
-          <h3 className="font-display text-2xl md:text-3xl text-ink mb-6">
-            Sign in to browse and shop everything we have in the showroom.
-          </h3>
-          <Link
-            href="/account/login"
-            className="label border-b border-accent text-accent pb-1 hover:border-ink hover:text-ink transition-colors"
-          >
-            Sign In to Shop →
-          </Link>
+      {categories.length > 0 && (
+        <div className="shop-light border-t border-shop-line">
+          <div className="flex flex-col items-center text-center px-6 pt-16 pb-8">
+            <span className="label text-shop-mute mb-3">The Full Collection</span>
+            <h3 className="font-display text-2xl md:text-3xl text-shop-text">Browse our full showroom</h3>
+          </div>
+          <CategoryStickyNav categories={categories} />
+          {categories.map((cat, i) => (
+            <ShopProductGrid key={cat.slug} category={cat} products={cat.products} priority={i === 0} />
+          ))}
         </div>
       )}
       <Services />

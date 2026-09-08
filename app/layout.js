@@ -1,6 +1,9 @@
 import "./globals.css";
+import { Suspense } from "react";
 import RegisterSW from "@/components/RegisterSW";
 import IntroSplash from "@/components/ecommerce/IntroSplash";
+import NotificationPrompt from "@/components/ecommerce/NotificationPrompt";
+import InstallPromptGate from "@/components/ecommerce/InstallPromptGate";
 import { ShopThemeProvider } from "@/lib/ShopThemeContext";
 import { supabasePublic } from "@/lib/supabasePublic";
 import { cookies } from "next/headers";
@@ -39,6 +42,10 @@ export default async function RootLayout({ children }) {
         <ShopThemeProvider initialTheme={initialTheme}>
           {children}
           <IntroSplash slides={introSlides || []} />
+          <NotificationPrompt />
+          <Suspense fallback={null}>
+            <InstallPromptGate />
+          </Suspense>
         </ShopThemeProvider>
         <RegisterSW />
       </body>
