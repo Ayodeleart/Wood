@@ -35,16 +35,23 @@ export async function middleware(req) {
   // goes stale and getUser() silently starts returning null, which looks
   // exactly like "I logged in, but it keeps asking me to log in again."
   //
-  // Skip this entirely when there's no Supabase session cookie at all —
-  // a logged-out visitor has no token to refresh, so calling getUser() here
-  // was just adding a full network round-trip to Supabase's Auth server on
-  // every single navigation (including every bottom-nav tap) for nothing.
+  // Always strip any client-supplied version of the verified-user headers
+  // first — these are only ever set below, after a real verification, so a
+  // raw request can never spoof a logged-in identity downstream.
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.delete("x-verified-user-id");
+  requestHeaders.delete("x-verified-user-email");
+
+  // Skip the actual Supabase call entirely when there's no session cookie at
+  // all — a logged-out visitor has no token to refresh, so calling getUser()
+  // here was just adding a full network round-trip to Supabase's Auth server
+  // on every single navigation (including every bottom-nav tap) for nothing.
   const hasSupabaseSession = req.cookies.getAll().some((c) => c.name.includes("-auth-token"));
   if (!hasSupabaseSession) {
-    return NextResponse.next();
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
-  let response = NextResponse.next({ request: req });
+  const cookiesToApply = [];
   const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     cookies: {
       getAll() {
@@ -52,13 +59,26 @@ export async function middleware(req) {
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
-        response = NextResponse.next({ request: req });
-        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+        cookiesToApply.push(...cookiesToSet);
       },
     },
   });
-  await supabase.auth.getUser();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Pages that only need to know "logged in or not" (e.g. the home page)
+  // can read these instead of calling auth.getUser() again themselves.
+  // Pages that need full profile data (avatar, full_name, etc.) still need
+  // their own call — this only removes the *redundant* boolean check.
+  if (user) {
+    requestHeaders.set("x-verified-user-id", user.id);
+    requestHeaders.set("x-verified-user-email", user.email || "");
+  }
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  cookiesToApply.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
   return response;
 }
 

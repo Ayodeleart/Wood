@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { X } from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabaseBrowser";
 
 export default function LoginPage() {
@@ -36,7 +37,14 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex-1 min-h-[70vh] flex items-center justify-center px-6 py-24">
+    <main className="relative flex-1 min-h-[70vh] flex items-center justify-center px-6 py-24">
+      <Link
+        href="/"
+        aria-label="Close"
+        className="absolute top-6 left-6 w-9 h-9 flex items-center justify-center border border-line rounded-full text-ink"
+      >
+        <X size={16} strokeWidth={1.5} />
+      </Link>
       <form onSubmit={onSubmit} className="max-w-sm w-full">
         <h1 className="font-display text-3xl text-ink mb-8">Sign In</h1>
 

@@ -14,8 +14,8 @@ import CategoryIconRow from "@/components/ecommerce/CategoryIconRow";
 import ShopShell from "@/components/ecommerce/ShopShell";
 import HomeGate from "@/components/HomeGate";
 import { getHomeData } from "@/lib/getHomeData";
-import { supabaseServer } from "@/lib/supabaseServer";
 import { supabasePublic } from "@/lib/supabasePublic";
+import { headers } from "next/headers";
 import Link from "next/link";
 
 export const revalidate = 60;
@@ -25,8 +25,10 @@ export default async function Home({ searchParams }) {
   const params = await searchParams;
   const forcePreview = params?.preview === "shop";
 
-  const sb = await supabaseServer();
-  const { data: { user } } = await sb.auth.getUser();
+  // Middleware already verified the session for this request — read its
+  // result instead of calling supabase.auth.getUser() again here.
+  const h = await headers();
+  const user = !!h.get("x-verified-user-id");
 
   const { data: allSlides } = await supabasePublic
     .from("shop_hero_slides")

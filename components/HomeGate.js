@@ -9,6 +9,7 @@ import { useIsInstalledPWA } from "@/lib/useIsInstalledPWA";
 export default function HomeGate({ loggedIn, forcePreview, landing, ecommerce }) {
   const installed = useIsInstalledPWA();
 
+  if (!loggedIn && !forcePreview && installed === null) return null;
   if (forcePreview || loggedIn || installed) return ecommerce;
   return landing;
 }
