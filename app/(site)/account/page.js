@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { supabaseServer } from "@/lib/supabaseServer";
+import { getVerifiedUser } from "@/lib/verifiedUser";
 import SignOutButton from "@/components/ecommerce/SignOutButton";
 import ShopShell from "@/components/ecommerce/ShopShell";
 import {
@@ -21,8 +21,7 @@ import {
 export const revalidate = 0;
 
 export default async function AccountPage() {
-  const sb = await supabaseServer();
-  const { data: { user } } = await sb.auth.getUser();
+  const user = await getVerifiedUser();
 
   if (!user) redirect("/account/login?next=/account");
 

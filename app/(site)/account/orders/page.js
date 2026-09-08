@@ -1,13 +1,12 @@
 import { redirect } from "next/navigation";
-import { supabaseServer } from "@/lib/supabaseServer";
+import { getVerifiedUser } from "@/lib/verifiedUser";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import ShopShell from "@/components/ecommerce/ShopShell";
 
 export const revalidate = 0;
 
 export default async function OrderHistoryPage() {
-  const sb = await supabaseServer();
-  const { data: { user } } = await sb.auth.getUser();
+  const user = await getVerifiedUser();
   if (!user) redirect("/account/login?next=/account/orders");
 
   const admin = supabaseAdmin();
