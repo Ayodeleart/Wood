@@ -12,16 +12,16 @@ export default function FeaturedProducts({ products, dark = false }) {
   if (!products?.length) return null;
 
   return (
-    <section className={`hidden md:block px-14 py-28 border-t ${dark ? "border-shop-line" : "border-line"}`}>
-      <div className="flex items-end justify-between mb-14">
+    <section className={`px-6 md:px-14 py-16 md:py-28 border-t ${dark ? "border-shop-line" : "border-line"}`}>
+      <div className="flex items-end justify-between mb-8 md:mb-14">
         <div>
           <span className={`label ${dark ? "text-shop-mute" : "text-mute"}`}>Featured</span>
-          <h2 className={`font-display font-semibold text-[clamp(28px,4vw,52px)] leading-[1.05] mt-2 ${dark ? "text-shop-text" : "text-ink"}`}>
+          <h2 className={`font-display font-semibold text-[clamp(24px,4vw,52px)] leading-[1.05] mt-2 ${dark ? "text-shop-text" : "text-ink"}`}>
             Our Most Loved Pieces
           </h2>
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         {products.map((p, i) => {
           const displayImage = getProductDisplayImage(p, night);
           return (

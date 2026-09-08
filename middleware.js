@@ -34,6 +34,16 @@ export async function middleware(req) {
   // the refreshed token never actually gets saved anywhere — the cookie just
   // goes stale and getUser() silently starts returning null, which looks
   // exactly like "I logged in, but it keeps asking me to log in again."
+  //
+  // Skip this entirely when there's no Supabase session cookie at all —
+  // a logged-out visitor has no token to refresh, so calling getUser() here
+  // was just adding a full network round-trip to Supabase's Auth server on
+  // every single navigation (including every bottom-nav tap) for nothing.
+  const hasSupabaseSession = req.cookies.getAll().some((c) => c.name.includes("-auth-token"));
+  if (!hasSupabaseSession) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({ request: req });
   const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     cookies: {

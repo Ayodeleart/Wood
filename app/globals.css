@@ -94,21 +94,6 @@ textarea {
   outline-offset: 2px;
 }
 
-@keyframes page-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.page-transition {
-  animation: page-fade-in 0.4s ease-out;
-}
-
 @keyframes heroFade {
   from {
     opacity: 0;
