@@ -19,10 +19,10 @@ export default function SettingsPage() {
         </span>
         <button
           onClick={() => setTheme(isDark ? "light" : "dark")}
-          className={"relative w-11 h-6 rounded-full transition-colors shrink-0 " + (isDark ? "bg-shop-text" : "bg-shop-line")}
+          className={"relative w-11 h-6 rounded-full transition-colors shrink-0 " + (isDark ? "bg-shop-accent" : "bg-shop-line")}
         >
           <span
-            className={"absolute top-0.5 w-5 h-5 rounded-full bg-shop-bg transition-transform " + (isDark ? "translate-x-5" : "translate-x-0.5")}
+            className={"absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 " + (isDark ? "translate-x-5" : "translate-x-0.5")}
           />
         </button>
       </div>

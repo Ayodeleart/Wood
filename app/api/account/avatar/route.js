@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import sharp from "sharp";
 import { supabaseServer } from "@/lib/supabaseServer";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
@@ -14,12 +15,23 @@ export async function POST(req) {
   const admin = supabaseAdmin();
   const bucket = process.env.SUPABASE_STORAGE_BUCKET || "octopusfur-media";
 
-  const buffer = Buffer.from(await file.arrayBuffer());
+  // Whatever format actually comes off the device (iPhones often hand over HEIC
+  // even from a plain "choose photo" picker) gets re-encoded to a real JPEG here
+  // — the raw bytes were previously uploaded as-is under a hardcoded ".jpg" name,
+  // so a HEIC file would get stored with a JPEG extension it isn't, and browsers
+  // can't render it: exactly the broken-image icon that was showing up.
+  const inputBuffer = Buffer.from(await file.arrayBuffer());
+  const avatarBuffer = await sharp(inputBuffer)
+    .rotate()
+    .resize(512, 512, { fit: "cover" })
+    .jpeg({ quality: 90 })
+    .toBuffer();
+
   const path = `avatars/${user.id}-${Date.now()}.jpg`;
 
   const { error: uploadError } = await admin.storage
     .from(bucket)
-    .upload(path, buffer, { contentType: file.type || "image/jpeg", upsert: true });
+    .upload(path, avatarBuffer, { contentType: "image/jpeg", upsert: true });
   if (uploadError) return NextResponse.json({ error: uploadError.message }, { status: 500 });
 
   const { data: publicUrlData } = admin.storage.from(bucket).getPublicUrl(path);

@@ -42,6 +42,7 @@
 
 html {
   scroll-behavior: smooth;
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -49,6 +50,12 @@ body {
   color: var(--ink);
   font-family: var(--font-ui);
   overflow-x: hidden;
+  overscroll-behavior-y: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+body::-webkit-scrollbar {
+  display: none;
 }
 
 /* Eyebrow / label style used throughout — the one recurring typographic device */
