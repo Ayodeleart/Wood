@@ -11,6 +11,7 @@ export default function NotificationPrompt() {
   const installed = useIsInstalledPWA();
   const [show, setShow] = useState(false);
   const [asking, setAsking] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (installed !== true) return;
@@ -22,10 +23,24 @@ export default function NotificationPrompt() {
 
   async function enable() {
     setAsking(true);
-    await requestNotificationPermission();
-    setAsking(false);
-    setShow(false);
-    localStorage.setItem(DISMISSED_KEY, "1");
+    setError("");
+    try {
+      const permission = await requestNotificationPermission();
+      if (permission !== "granted") {
+        setError(
+          permission === "denied"
+            ? "Notifications are blocked — enable them for this site in your browser settings."
+            : "Notifications weren't enabled."
+        );
+        return;
+      }
+      setShow(false);
+      localStorage.setItem(DISMISSED_KEY, "1");
+    } catch (err) {
+      setError(err.message || "Couldn't enable notifications — try again.");
+    } finally {
+      setAsking(false);
+    }
   }
 
   function dismiss() {
@@ -45,6 +60,7 @@ export default function NotificationPrompt() {
         <p className="text-sm text-mute mb-6">
           Turn on notifications to hear about new arrivals, restocks, and your order updates.
         </p>
+        {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
         <button
           onClick={enable}
           disabled={asking}
