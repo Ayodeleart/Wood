@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { getVerifiedUser } from "@/lib/verifiedUser";
 import SignOutButton from "@/components/ecommerce/SignOutButton";
+import ProfileAvatar from "@/components/ecommerce/ProfileAvatar";
 import ShopShell from "@/components/ecommerce/ShopShell";
 import {
   MapPin,
@@ -49,13 +49,7 @@ export default async function AccountPage() {
       <div className="flex items-center justify-between bg-shop-surface rounded-2xl p-4 mb-6">
         <div className="flex items-center gap-4">
           <div className="relative w-14 h-14 rounded-full bg-shop-tile overflow-hidden shrink-0">
-            {avatarUrl ? (
-              <Image src={avatarUrl} alt={name} fill className="object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-shop-bg text-xl font-medium">
-                {name?.[0]?.toUpperCase() || "?"}
-              </div>
-            )}
+            <ProfileAvatar src={avatarUrl} name={name} size={56} />
           </div>
           <div>
             <p className="text-shop-text font-medium">{name}</p>

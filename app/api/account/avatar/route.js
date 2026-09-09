@@ -15,17 +15,17 @@ export async function POST(req) {
   const admin = supabaseAdmin();
   const bucket = process.env.SUPABASE_STORAGE_BUCKET || "octopusfur-media";
 
-  // Whatever format actually comes off the device (iPhones often hand over HEIC
-  // even from a plain "choose photo" picker) gets re-encoded to a real JPEG here
-  // — the raw bytes were previously uploaded as-is under a hardcoded ".jpg" name,
-  // so a HEIC file would get stored with a JPEG extension it isn't, and browsers
-  // can't render it: exactly the broken-image icon that was showing up.
+  // Now that the client sends an already-compressed JPEG (see edit/page.js),
+  // this re-encode is mostly a safety net — but keep it defensive: an
+  // unhandled throw here would produce an HTML error page instead of JSON,
+  // which is exactly what broke client-side parsing before.
   const inputBuffer = Buffer.from(await file.arrayBuffer());
-  const avatarBuffer = await sharp(inputBuffer)
-    .rotate()
-    .resize(512, 512, { fit: "cover" })
-    .jpeg({ quality: 90 })
-    .toBuffer();
+  let avatarBuffer;
+  try {
+    avatarBuffer = await sharp(inputBuffer).rotate().resize(512, 512, { fit: "cover" }).jpeg({ quality: 90 }).toBuffer();
+  } catch (err) {
+    return NextResponse.json({ error: "Couldn't process that photo — try a different one." }, { status: 400 });
+  }
 
   const path = `avatars/${user.id}-${Date.now()}.jpg`;
 

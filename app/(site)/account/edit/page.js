@@ -38,18 +38,54 @@ export default function EditProfilePage() {
     if (!file) return;
     setUploading(true);
     setError("");
-    const fd = new FormData();
-    fd.append("file", file);
     try {
+      const compressed = await compressImage(file);
+      const fd = new FormData();
+      fd.append("file", compressed, "avatar.jpg");
       const res = await fetch("/api/account/avatar", { method: "POST", body: fd });
+
+      const contentType = res.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("Upload failed — the photo may be too large. Try a different one.");
+      }
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new Error(data.error || "Upload failed.");
       setAvatarUrl(data.url);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Couldn't upload that photo — try a different one.");
     } finally {
       setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
     }
+  }
+
+  function compressImage(file) {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      const url = URL.createObjectURL(file);
+
+      img.onload = () => {
+        const maxSide = 768;
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(
+          (blob) => (blob ? resolve(blob) : reject(new Error("Couldn't process that photo."))),
+          "image/jpeg",
+          0.85
+        );
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Couldn't read that photo — try a different one."));
+      };
+      img.src = url;
+    });
   }
 
   async function save(e) {
