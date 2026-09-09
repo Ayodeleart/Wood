@@ -26,29 +26,34 @@ export default function NotificationsPage() {
     setError("");
     const turningOn = !prefs[key];
 
-    // Turning any of these on is the user's actual signal to enable real
-    // push notifications — previously this just saved a preference flag
-    // with no connection to the browser's Notification permission or an
-    // actual push subscription, which is why announcements had 0 subscribers
-    // no matter how many people had these toggled "on".
-    if (turningOn && typeof Notification !== "undefined" && Notification.permission !== "granted") {
-      if (!pushSupported()) {
-        setError("Notifications aren't supported in this browser.");
-        return;
+    try {
+      // Turning any of these on is the user's actual signal to enable real
+      // push notifications — previously this just saved a preference flag
+      // with no connection to the browser's Notification permission or an
+      // actual push subscription, which is why announcements had 0
+      // subscribers no matter how many people had these toggled "on".
+      if (turningOn && typeof Notification !== "undefined" && Notification.permission !== "granted") {
+        if (!pushSupported()) {
+          setError("Notifications aren't supported in this browser.");
+          return;
+        }
+        const permission = await requestNotificationPermission();
+        if (permission !== "granted") {
+          setError(
+            permission === "denied"
+              ? "Notifications are blocked — enable them for this site in your browser settings."
+              : "Notifications weren't enabled."
+          );
+          return;
+        }
+      } else if (turningOn) {
+        // Permission already granted from before — still make sure a live
+        // subscription actually exists (idempotent if one already does).
+        await subscribeToPush();
       }
-      const permission = await requestNotificationPermission();
-      if (permission !== "granted") {
-        setError(
-          permission === "denied"
-            ? "Notifications are blocked — enable them for this site in your browser settings."
-            : "Notifications weren't enabled."
-        );
-        return;
-      }
-    } else if (turningOn) {
-      // Permission already granted from before — still make sure a live
-      // subscription actually exists (idempotent if one already does).
-      await subscribeToPush();
+    } catch (err) {
+      setError(err.message || "Couldn't enable notifications — try again.");
+      return;
     }
 
     const next = { ...prefs, [key]: turningOn };
