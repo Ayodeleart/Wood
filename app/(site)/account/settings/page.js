@@ -14,7 +14,12 @@ export default function SettingsPage() {
 
       <div className="flex items-center justify-between bg-shop-surface rounded-2xl p-4">
         <span className="flex items-center gap-3">
-          <Moon size={18} strokeWidth={1.6} className="text-shop-mute" />
+          <Moon
+            size={18}
+            strokeWidth={1.6}
+            className={"transition-colors " + (isDark ? "text-shop-accent" : "text-shop-mute")}
+            fill={isDark ? "currentColor" : "none"}
+          />
           <span className="text-shop-text text-sm">Dark Mode</span>
         </span>
         <button
